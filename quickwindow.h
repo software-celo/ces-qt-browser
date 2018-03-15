@@ -43,6 +43,7 @@
 #define QUICKWINDOW_H
 
 #include <QQmlApplicationEngine>
+#include "idlehelper.h"
 
 class QWebEngineView;
 

@@ -3,9 +3,11 @@ TEMPLATE = app
 QT += qml quick webengine
 CONFIG += c++11
 
-SOURCES += \
-    main.cpp \
-    quickwindow.cpp
+SOURCES += main.cpp \
+    quickwindow.cpp \
+    backlight.cpp \
+    inputnotifier.cpp \
+    idlehelper.cpp
 
 RESOURCES += qml.qrc
 
@@ -16,6 +18,8 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
+    quickwindow.h \
     util.h \
-    quickwindow.h
-
+    backlight.h \
+    inputnotifier.h \
+    idlehelper.h

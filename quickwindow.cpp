@@ -38,16 +38,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include "quickwindow.h"
-
-#include "util.h"
-
 #include <QFileInfo>
 #include <QObject>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QUrl>
+
+#include "quickwindow.h"
+#include "util.h"
+#include "backlight.h"
+#include "idlehelper.h"
 
 class Utils : public QObject {
     Q_OBJECT
@@ -60,7 +60,10 @@ public:
 
 ApplicationEngine::ApplicationEngine()
 {
-    rootContext()->setContextProperty("utils", new Utils(this));
+    IdleHelper *idleHelper = new IdleHelper(this);
+    rootContext()->setContextProperty("_utils", new Utils(this));
+    rootContext()->setContextProperty("_backlight", new Backlight(this));
+    rootContext()->setContextProperty("_idleTimer", idleHelper);
     load(QUrl("qrc:/main.qml"));
     QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
 }

@@ -6,9 +6,16 @@ import QtQuick.Controls 1.0
 Window {
     id: window
     visible: true
-    height: 600
-    width: 800
+    height: 800
+    width: 1280
     function load(url) { webEngineView.url = url }
+
+    Connections {
+        target: _idleTimer
+        onReloadBrowser: {
+            webEngineView.reload()
+        }
+    }
 
     Action {
         shortcut: "Ctrl+R"
@@ -22,6 +29,12 @@ Window {
         id: webEngineView
         focus: true
         anchors.fill: parent
+    }
+
+    Lockscreen{
+        id: lockscreen
+        anchors.bottom: parent.bottom
+        x: 0
     }
 }
 
