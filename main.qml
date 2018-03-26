@@ -48,11 +48,13 @@ Window {
 
 	Timer {
 		id: keypr
-		interval: 500
+        interval: 100
 		running: false
 		repeat: false
 		onTriggered:{
-			webEngineView.runJavaScript("document.body.scrollIntoView()",console.log("OK"));
+            /*Code is used, to shift hidden context input elements to view over keyboard*/
+            InputContext.sendKeyClick(0x01000006," ",0);    /* Emulate Endkeycode with space */
+            InputContext.sendKeyClick(0x01000003,"",0);     /* Deletes space */
 		}
 	}
 
@@ -80,29 +82,29 @@ Window {
 
 
 	function pressedKey(k){
-	 //console.log("Keycode:"+ k)
-		if(k === 16777220){								//Ask for Enter Key
+        /*Ask for Enterkey*/
+        if(k === 16777220){
 			//console.log("State Shift:"+ InputContext.shift)
 			if(InputContext.shift === false){
 				//console.log("Enter without shift")
 				InputContext.sendKeyClick(16777217,"",0)
-				InputContext.sendKeyClick(0x01000014,"",0)			//Key Right
+                InputContext.sendKeyClick(0x01000014,"",0)
 			}
 			else{
 				//console.log("Enter with shift")
-				InputContext.sendKeyClick(0x01000006,"\n",0)			//Keycode --> Enter_Insert 
-				//InputContext.sendKeyClick(0x01000014,"",0)			//Key Right
+                InputContext.sendKeyClick(0x01000006,"\n",0)
 			}
 		}
 	}
 
 	function showKeyboardStats(){
 		if(Qt.inputMethod.visible === true){
-			//console.log("Keyboard visible")
+            /*  Keyboard visible */
 			webEngineView.height = webEngineView.height-Qt.inputMethod.keyboardRectangle.height
-			//keypr.running = true
+            /*Triggers timer to emulate a keypress after keyboard is fully shown */
+            keypr.running = true
 		}else{
-			//console.log("Keyboard invisible")
+            /*  Keyboard invisble  */
 			webEngineView.height = webEngineView.height+Qt.inputMethod.keyboardRectangle.height
 		}
 	}

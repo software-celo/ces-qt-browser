@@ -1,14 +1,16 @@
 /***************************************************************************************************************
-**	Author: Peter Fink
-**	Co-Author: Steffen Kothe
-** 	Description: QtWebEngine based Browser with integration of QT Virtualkeyboard
-**  Company: Christ Electronic System GmbH
-**  Last changes: 16.03.2018 -from- Steffen Kothe
+** Author: Peter Fink
+** Co-Author: Steffen Kothe
+** Description: QtWebEngine based Browser with integration of QT Virtualkeyboard
+** Company: Christ Electronic System GmbH
+** Last changes: 26.03.2018 -from- Steffen Kothe
 **
-**  Tested with QT Version : 5.9.4  --> Chromium 56 based
+** Tested with QT Version : 5.9.4  --> Chromium 56 based
+**
+** Used License: LGPLv3
 **
 **
-** @Environment variables:
+**  @Environment variables:
 **
 **		!Environment variable activates Keyboard!
 **
@@ -52,6 +54,10 @@
 **               A not including of this packages result in a faulty behavior with alert/confirm dialogs.
 **               Disable Alert/Block Dialogs prevent faulty behavior in this case.
 **
+**       5       In some cases, emulated context shift with symbolinsertion does not work.
+**                      Works currently not in:
+**                              -   Angular Dialogwindows
+**
 ***************************************************************************************************************/
 
 
@@ -72,6 +78,7 @@ int main(int argc, char *argv[]){
 	bool keyboard_enable;
 	bool block_dialog;
 	QString envValue;
+
 
 	/*Proof for load of QT Virtual Keyboard*/
 	env=QProcessEnvironment::systemEnvironment();
