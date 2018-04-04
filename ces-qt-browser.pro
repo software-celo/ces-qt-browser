@@ -1,7 +1,12 @@
 TEMPLATE = app
 
-QT += qml quick webengine
+QT += qml quick quickcontrols2 webengine
 CONFIG += c++11
+static {
+    QT += svg
+    QTPLUGIN += qtvirtualkeyboardplugin
+}
+
 
 SOURCES += main.cpp \
     quickwindow.cpp \

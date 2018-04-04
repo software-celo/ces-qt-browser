@@ -64,6 +64,26 @@ ApplicationEngine::ApplicationEngine()
     rootContext()->setContextProperty("_utils", new Utils(this));
     rootContext()->setContextProperty("_backlight", new Backlight(this));
     rootContext()->setContextProperty("_idleTimer", idleHelper);
-    load(QUrl("qrc:/main.qml"));
+    qInfo("Keyboard disabled");
+    load(QUrl("qrc:/main_nok.qml"));
+    QMetaObject::invokeMethod(rootObjects().first(), "blockDialogs", Q_ARG(QVariant, true));
+    QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
+}
+
+ApplicationEngine::ApplicationEngine(bool keyboard, bool dialog_block)
+{
+    rootContext()->setContextProperty("utils", new Utils(this));
+    if(keyboard ==  true){
+        qInfo("Keyboard enabled");
+		load(QUrl("qrc:/main.qml"));
+	}else{
+        qInfo("Keyboard disabled");
+		load(QUrl("qrc:/main_nok.qml"));
+	}
+
+    /*Calls a method, which handle the dialog request*/
+    QMetaObject::invokeMethod(rootObjects().first(), "blockDialogs", Q_ARG(QVariant, dialog_block));
+
+    /*Calls a method, which load a url to webengine*/
     QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
 }

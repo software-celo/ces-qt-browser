@@ -43,6 +43,7 @@
 #define QUICKWINDOW_H
 
 #include <QQmlApplicationEngine>
+#include <QTextStream>
 #include "idlehelper.h"
 
 class QWebEngineView;
@@ -51,6 +52,7 @@ class ApplicationEngine : public QQmlApplicationEngine {
     Q_OBJECT
 public:
     ApplicationEngine();
+    ApplicationEngine(bool keyboard, bool dialog_block);
 };
 
 #endif // QUICKWINDOW_H

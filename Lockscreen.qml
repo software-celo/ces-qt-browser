@@ -43,7 +43,7 @@ Rectangle {
         }
     }
 
-    ParallelAnimation{
+    ParallelAnimation {
         id: lockscreen
         NumberAnimation {
             target: page
@@ -74,7 +74,7 @@ Rectangle {
         running: false
     }
 
-    Image{
+    Image {
         id: lockedLogo
         source: "web_locked.svg"
         sourceSize.height: 300
@@ -86,7 +86,7 @@ Rectangle {
         opacity: 0.6
     }
 
-    MouseArea{
+    MouseArea {
         id: mouseLockArea
         anchors.fill: page
         onClicked: {

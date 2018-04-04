@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>Lockscreen.qml</file>
         <file>web_locked.svg</file>
+        <file>main_nok.qml</file>
+        <file>webset.js</file>
     </qresource>
 </RCC>
