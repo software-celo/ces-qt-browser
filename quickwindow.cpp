@@ -38,16 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QFileInfo>
-#include <QObject>
-#include <QQmlContext>
-#include <QQmlEngine>
-#include <QUrl>
 
 #include "quickwindow.h"
 #include "util.h"
-#include "backlight.h"
-#include "idlehelper.h"
 
 class Utils : public QObject {
     Q_OBJECT
@@ -58,21 +51,21 @@ public:
 
 #include "quickwindow.moc"
 
-ApplicationEngine::ApplicationEngine()
-{
-    IdleHelper *idleHelper = new IdleHelper(this);
-    rootContext()->setContextProperty("_utils", new Utils(this));
-    rootContext()->setContextProperty("_backlight", new Backlight(this));
-    rootContext()->setContextProperty("_idleTimer", idleHelper);
-    qInfo("Keyboard disabled");
-    load(QUrl("qrc:/main_nok.qml"));
-    QMetaObject::invokeMethod(rootObjects().first(), "blockDialogs", Q_ARG(QVariant, true));
-    QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
-}
-
 ApplicationEngine::ApplicationEngine(bool keyboard, bool dialog_block)
 {
-    rootContext()->setContextProperty("utils", new Utils(this));
+    m_configBackend = new ConfigBackend(this);
+    m_idleHelper = new IdleHelper(this, m_configBackend);
+
+    rootContext()->setContextProperty("_utils", new Utils(this));
+
+    m_backlight = new Backlight(this);
+    m_backlight->setBlankBrightness(m_configBackend->getBlankBrightness());
+    m_backlight->setLockBrightness(m_configBackend->getLockBrightness());
+    m_backlight->setUnlockBrightness(m_configBackend->getUnlockBrightness());
+
+    rootContext()->setContextProperty("_backlight", m_backlight);
+    rootContext()->setContextProperty("_idleHelper", m_idleHelper);
+
     if(keyboard ==  true){
         qInfo("Keyboard enabled");
 		load(QUrl("qrc:/main.qml"));
@@ -81,9 +74,15 @@ ApplicationEngine::ApplicationEngine(bool keyboard, bool dialog_block)
 		load(QUrl("qrc:/main_nok.qml"));
 	}
 
-    /*Calls a method, which handle the dialog request*/
+    /*Calls a method, which handles the dialog request*/
     QMetaObject::invokeMethod(rootObjects().first(), "blockDialogs", Q_ARG(QVariant, dialog_block));
 
-    /*Calls a method, which load a url to webengine*/
+    /*Calls a method, which loads a url to webengine*/
     QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
+}
+
+ApplicationEngine::~ApplicationEngine(){
+    delete m_idleHelper;
+    delete m_backlight;
+    delete m_configBackend;
 }

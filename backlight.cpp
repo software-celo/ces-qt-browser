@@ -1,12 +1,9 @@
 #include "backlight.h"
 
-
 Backlight::Backlight(QObject* parent = 0): QObject(parent)
 {
-    //find valid backlight path
+    //find valid backlight path; search here:
     m_path = "/sys/class/backlight/";
-    m_blPath = "/sys/class/gpio/";
-    m_blEnableGpio = "34";
 
     try
     {
@@ -20,19 +17,84 @@ Backlight::Backlight(QObject* parent = 0): QObject(parent)
         m_backlightOK = false;
     }
 
-    m_lockBrightness = 1;
-    m_unlockBrightness = 4;
-
-    m_brightness = getBrightness();
     m_maxBrightness = getMaxBrightness();
+
+    // set lockBrightness to about half maxBrightness,
+    // unlockBrightness to full maxBrightness
+    // and blankBrightness to 0
+    // until they are set to their final values
+    m_lockBrightness = m_maxBrightness >> 1;
+    m_unlockBrightness = m_maxBrightness;
+    m_brightness = getBrightness();
+    m_blankBrightness = 0;
+    m_blankEnable = true;
 
     setBLEnable(1);
 
-    lock();
+// TODO - defined start state?
+//    lock();
 }
+
+
+void Backlight::setLockBrightness(int brightness)
+{
+    // restrict brightness to  0 <-> maxBrightness
+    if (brightness < 0 || brightness > m_maxBrightness) {
+        if (brightness < 0)
+            brightness = 0;
+        else
+            brightness = m_maxBrightness;
+    }
+
+    m_lockBrightness = brightness;
+
+    return;
+}
+
+
+void Backlight::setUnlockBrightness(int brightness)
+{
+    // restrict brightness to  0 <-> maxBrightness
+    if (brightness < 0 || brightness > m_maxBrightness) {
+        if (brightness < 0)
+            brightness = 0;
+        else
+            brightness = m_maxBrightness;
+    }
+
+    m_unlockBrightness = brightness;
+
+    return;
+}
+
+
+void Backlight::setBlankBrightness(int brightness)
+{
+    // restrict brightness to  0 <-> maxBrightness
+    if (brightness < 0 || brightness > m_maxBrightness) {
+        if (brightness < 0)
+            brightness = 0;
+        else
+            brightness = m_maxBrightness;
+    }
+
+    m_blankBrightness = brightness;
+
+    return;
+}
+
+
+void Backlight::setBlankPowerOff(bool enable)
+{
+    m_blankEnable = enable;
+    return;
+}
+
 
 int Backlight::getMaxBrightness()
 {
+    int maxBrightness;
+
     if (m_backlightOK == false)
         return 0;
 
@@ -45,7 +107,12 @@ int Backlight::getMaxBrightness()
     if (linelength < 0)
         return 0;
     QString br_max(buffer);
-    m_maxBrightness = br_max.toInt();
+    maxBrightness = br_max.toInt();
+
+    if (maxBrightness != m_maxBrightness) {
+        m_maxBrightness = maxBrightness;
+        emit maxBrightnessChanged();
+    }
 
     return m_maxBrightness;
 }
@@ -53,6 +120,8 @@ int Backlight::getMaxBrightness()
 
 int Backlight::getBrightness()
 {
+    int brightness;
+
     if (m_backlightOK == false)
         return 0;
 
@@ -65,16 +134,23 @@ int Backlight::getBrightness()
     if (linelength < 0)
         return 0;
     QString br_max(buffer);
-    m_brightness = br_max.toInt();
+    brightness = br_max.toInt();
+
+    if (brightness != m_brightness) {
+        m_brightness = brightness;
+        emit brightnessChanged();
+    }
 
     return m_brightness;
 }
+
 
 void Backlight::setBrightness(int brightness)
 {
     if (m_backlightOK == false)
         return;
 
+    // restrict brightness to  0 <-> maxBrightness
     if (brightness < 0 || brightness > m_maxBrightness) {
         if (brightness < 0)
             brightness = 0;
@@ -82,7 +158,7 @@ void Backlight::setBrightness(int brightness)
             brightness = m_maxBrightness;
     }
 
-//    qDebug() << "setting brightness to " << brightness;
+    qDebug() << "setting brightness to " << brightness;
 
     QFile blFile(m_path + "/brightness");
 
@@ -92,71 +168,71 @@ void Backlight::setBrightness(int brightness)
     blFile.write(QString::number(brightness).toLocal8Bit());
     blFile.close();
 
-    m_brightness = getBrightness();
+    // read back the real current value
+    getBrightness();
+    return;
 }
+
 
 void Backlight::lock()
 {
     setBrightness(m_lockBrightness);
+    setBLEnable(1);
+    return;
 }
+
 
 void Backlight::unlock()
 {
     setBrightness(m_unlockBrightness);
+    setBLEnable(1);
+    return;
 }
+
 
 void Backlight::blank()
 {
     setBrightness(0);
-    setBLEnable(0);
+    if (m_blankEnable)
+        setBLEnable(0);
+    else
+        setBLEnable(1);
+    return;
 }
+
 
 void Backlight::unblank()
 {
     setBLEnable(1);
     usleep(100000);
     setBrightness(m_lockBrightness);
+    return;
 }
+
 
 void Backlight::setBLEnable(int value)
 {
+    if (m_backlightOK == false)
+        return;
 
     if (value > 1 || value < 0) {
         return;
     }
 
-//  check if gpio is already exported
-//  qDebug() << "setBLEnable";
+    // invert the value because bl_power is currently inverted
+    if (value == 0)
+        value = 1;
+    else
+        value = 0;
 
-    if (!QDir(m_blPath + "gpio" + m_blEnableGpio).exists()) {
-        QFile exportFile(m_blPath + "/export");
+    qDebug() << "set bl_power to " << value;
 
-        if (!exportFile.open(QIODevice::WriteOnly | QIODevice::Text))
-                return;
+    QFile bl_powerFile(m_path + "/bl_power");
 
-        exportFile.write(m_blEnableGpio.toLocal8Bit());
-        exportFile.close();
-
-//      set direction
-//      qDebug() << "set direction";
-        QFile directionFile(m_blPath + "gpio" + m_blEnableGpio + "/direction");
-
-        if (!directionFile.open(QIODevice::WriteOnly | QIODevice::Text))
-                return;
-
-        directionFile.write(QString("high").toLocal8Bit());
-        directionFile.close();
-    }
-
-//  set gpio
-//  qDebug() << "set gpio";
-
-    QFile gpioFile(m_blPath + "gpio" + m_blEnableGpio + "/value");
-
-    if (!gpioFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (!bl_powerFile.open(QIODevice::WriteOnly | QIODevice::Text))
             return;
 
-    gpioFile.write(QString::number(value).toLocal8Bit());
-    gpioFile.close();
-
+    bl_powerFile.write(QString::number(value).toLocal8Bit());
+    bl_powerFile.close();
+    return;
 }

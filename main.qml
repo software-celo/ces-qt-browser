@@ -1,8 +1,8 @@
-import QtQuick 2.9 //2.1
-import QtQuick.Window 2.2 //2.1
-import QtWebEngine 1.5 // 1.3
-import QtQuick.Controls 2.2 //1.0
-import QtQuick.Controls 1.2 //1.0
+import QtQuick 2.9
+import QtQuick.Window 2.2
+import QtWebEngine 1.5
+//import QtQuick.Controls 2.2
+import QtQuick.Controls 1.2
 import QtQuick.VirtualKeyboard 2.2
 import QtQuick.VirtualKeyboard.Styles 2.2
 import QtQuick.VirtualKeyboard.Settings 2.2
@@ -11,12 +11,12 @@ import "webset.js" as Webset
 Window {
     id: window
     visible: true
-    height: 480		//480
-    width: 800		//800
+    height: 480
+    width: 800
 
     Connections {
-        target: _idleTimer
-        onReloadBrowser: {
+        target: _idleHelper
+        onDailyReset: {
             webEngineView.reload()
         }
     }
@@ -69,6 +69,8 @@ Window {
         id: lockscreen
         anchors.bottom: parent.bottom
         x: 0
+        windowHeight: parent.height
+        windowWidth: parent.width
     }
 
 	Component.onCompleted: {
@@ -82,21 +84,21 @@ Window {
     }
 
     function blockDialogs(bool_block){
-        console.log("Disable Block/Alert dialogs: " + bool_block);
+//        console.debug("Disable Block/Alert dialogs: " + bool_block);
         Webset.blockDialogs(bool_block)
     }
 
     function pressedKey(k) {
         /*Ask for Enterkey*/
         if(k === 16777220){
-			//console.log("State Shift:"+ InputContext.shift)
+            //console.debug("State Shift:"+ InputContext.shift)
 			if(InputContext.shift === false){
-				//console.log("Enter without shift")
+                //console.debug("Enter without shift")
 				InputContext.sendKeyClick(16777217,"",0)
                 InputContext.sendKeyClick(0x01000014,"",0)
 			}
 			else{
-				//console.log("Enter with shift")
+                //console.debug("Enter with shift")
                 InputContext.sendKeyClick(0x01000006,"\n",0)
 			}
 		}
@@ -108,7 +110,8 @@ Window {
 			webEngineView.height = webEngineView.height-Qt.inputMethod.keyboardRectangle.height
             /*Triggers timer to emulate a keypress after keyboard is fully shown */
             keypr.running = true
-		}else{
+        }
+        else{
             /*  Keyboard invisble  */
 			webEngineView.height = webEngineView.height+Qt.inputMethod.keyboardRectangle.height
 		}

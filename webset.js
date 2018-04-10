@@ -22,14 +22,15 @@ function webEngineConfig(webengine,webEngineView){
 	webengine.defaultProfile.offTheRecord = true;           // Hold everything in memory --> disable disk
 
 	if(webengine.defaultProfile.offTheRecord === true){
-		console.log("Cache in RAM: Activated")
+        //console.debug("Cache in RAM: Activated")
 	}else{
-		console.log("Cache in RAM: Deactivated");
-		console.log("Please look at the other settings");
-		console.log("Storagepath:" + webengine.defaultProfile.persistentStoragePath);
-		console.log("CachePath" + webengine.defaultProfile.cachePath);
-		console.log("Cachetype:" + webengine.defaultProfile.httpCacheType);
-		console.log("Cookiesettings:" + webengine.defaultProfile.persistentCookiesPolicy);
+        /*console.debug("Cache in RAM: Deactivated");
+        console.debug("Please look at the other settings");
+        console.debug("Storagepath:" + webengine.defaultProfile.persistentStoragePath);
+        console.debug("CachePath" + webengine.defaultProfile.cachePath);
+        console.debug("Cachetype:" + webengine.defaultProfile.httpCacheType);
+        console.debug("Cookiesettings:" + webengine.defaultProfile.persistentCookiesPolicy);
+        */
 	}
 	webengine.defaultProfile.clearHttpCache();
 	webengine.defaultProfile.httpCacheMaximumSize = 4000000;
@@ -59,27 +60,27 @@ function contextMenuHandler(request){
 function errorPageHandler(loadRequest){
 	switch(loadRequest.status){
 		case 0:{
-			//console.log("Load started");
+            //console.debug("Load started");
 			break;
 		}
 		case 1:{
-			//console.log("Load stopped");
+            //console.debug("Load stopped");
 			break;
 		}
 		case 2:{
-			//console.log("Load succeded");
+            //console.debug("Load succeded");
 			break;
 		}
 		case 3:{
-			console.log("Load failed");
-			console.log("Status:" + loadRequest.status);
-			console.log("Errordescription:" +  loadRequest.errorString);
-			console.log("ErrorDomain:" + loadRequest.errorDomain);
-			console.log("ErrorCode:" + loadRequest.errorCode);
-			console.log("Requested URL:" + loadRequest.url);
+            /*console.debug("Load failed");
+            console.debug("Status:" + loadRequest.status);
+            console.debug("Errordescription:" +  loadRequest.errorString);
+            console.debug("ErrorDomain:" + loadRequest.errorDomain);
+            console.debug("ErrorCode:" + loadRequest.errorCode);
+            console.debug("Requested URL:" + loadRequest.url); */
 			/*Open standard error page*/
 			//webEngineView.url = "file:///ErrorLandingPage/error.html";
-			console.log("Go to Errorpage:" + errorpagepath);
+            //console.debug("Go to Errorpage:" + errorpagepath);
 			wev.url = errorpagepath +"?edomain=" +loadRequest.errorDomain+"&ecode=" +loadRequest.errorCode ;
 			break;
 		}

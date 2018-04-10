@@ -42,17 +42,30 @@
 #ifndef QUICKWINDOW_H
 #define QUICKWINDOW_H
 
+#include <QFileInfo>
+#include <QObject>
+#include <QQmlContext>
+#include <QQmlEngine>
 #include <QQmlApplicationEngine>
+#include <QUrl>
 #include <QTextStream>
+#include "quickwindow.h"
+#include "backlight.h"
 #include "idlehelper.h"
+#include "configBackend.h"
 
 class QWebEngineView;
 
 class ApplicationEngine : public QQmlApplicationEngine {
     Q_OBJECT
 public:
-    ApplicationEngine();
     ApplicationEngine(bool keyboard, bool dialog_block);
+    ~ApplicationEngine();
+
+private:
+    ConfigBackend* m_configBackend;
+    IdleHelper* m_idleHelper;
+    Backlight* m_backlight;
 };
 
 #endif // QUICKWINDOW_H

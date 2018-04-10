@@ -12,7 +12,9 @@ SOURCES += main.cpp \
     quickwindow.cpp \
     backlight.cpp \
     inputnotifier.cpp \
-    idlehelper.cpp
+    idlehelper.cpp \
+    configBackend.cpp \
+    proximity.cpp
 
 RESOURCES += qml.qrc
 
@@ -27,4 +29,6 @@ HEADERS += \
     util.h \
     backlight.h \
     inputnotifier.h \
-    idlehelper.h
+    idlehelper.h \
+    configBackend.h \
+    proximity.h

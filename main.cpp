@@ -1,9 +1,9 @@
 /***************************************************************************************************************
-** Author: Peter Fink
-** Co-Author: Steffen Kothe
+** Copyright (c) 2015-2018 Christ Electronic Systems GmbH
+** Copyright (c) 2015-2018 Peter Fink <pfink@christ-es.de>
+** Copyright (c) 2018      Steffen Kothe <skothe@christ-es.de>
+**
 ** Description: QtWebEngine based Browser with integration of QT Virtualkeyboard
-** Company: Christ Electronic System GmbH
-** Last changes: 26.03.2018 -from- Steffen Kothe
 **
 ** Tested with QT Version : 5.9.4  --> Chromium 56 based
 **
@@ -60,7 +60,6 @@
 **
 ***************************************************************************************************************/
 
-
 #include <QQuickView>
 #include <QQmlEngine>
 #include <QtGui/QGuiApplication>
@@ -84,18 +83,18 @@ int main(int argc, char *argv[]){
 	keyboard_env_exist = env.contains(QString("QT_KEYBOARD_ENABLE"));
 	if( keyboard_env_exist == true){
 		envValue=env.value(QString("QT_KEYBOARD_ENABLE"),nullptr);
-		qInfo("Keyboard enable is: %s", envValue.toStdString().c_str());
+//		qInfo("Keyboard enable is: %s", envValue.toStdString().c_str());
 		if(envValue.compare(QString("true")) == 0){
 			keyboard_enable = true;
-			qInfo("Enable Qt Keyboardplugin");
+//			qInfo("Enable Qt Keyboardplugin");
 			qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
 		}else{
 			keyboard_enable  = false;
-			qInfo("Disable Qt Keyboardplugin");
+//			qInfo("Disable Qt Keyboardplugin");
 		}
 	}else{
 		keyboard_enable = false;
-		qInfo("Disable Qt Keyboardplugin");
+//		qInfo("Disable Qt Keyboardplugin");
 	}
 
     /*Environment Variable for blocking Alert/Confirm Dialogs in Browser*/
