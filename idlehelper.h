@@ -49,6 +49,7 @@ private:
     bool m_dailyReset;
     bool m_resetToday;
     int m_resetTime;
+    bool m_proximityEnable;
 };
 
 #endif // IDLEHELPER_H

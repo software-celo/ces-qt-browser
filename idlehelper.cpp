@@ -72,8 +72,11 @@ void IdleHelper::reloadConfig()
     m_notifier->setTimeoutBlank(m_cfgBackend->getBlankTime());
     m_resetTime = m_cfgBackend->getResetTime();
     m_dailyReset = m_cfgBackend->getResetEnable();
-    m_proximity->setup(m_cfgBackend->getProximityPWM(), m_cfgBackend->getProximityPWMChip(), \
+    m_proximityEnable = m_cfgBackend->getProximityEnable();
+    if ( m_proximityEnable ) {
+        m_proximity->setup(m_cfgBackend->getProximityPWM(), m_cfgBackend->getProximityPWMChip(), \
                        m_cfgBackend->getProximityGPIO(), m_cfgBackend->getPWMPeriod(),m_cfgBackend->getPWMDutyCycle());
+    }
     emit lockEnableChanged();
     emit blankEnableChanged();
     return;
