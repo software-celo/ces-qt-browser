@@ -106,9 +106,17 @@ int ConfigBackend::getPWMPeriod()
 
 void ConfigBackend::readCESConfig()
 {
-    m_lockTime = getIntFromSettings("lockTime", "Screensaver", 3600);
+    m_lockTime = getIntFromSettings("lockTime", "Screensaver", 30);
     m_blankTime = getIntFromSettings("blankTime", "Screensaver", 3600);
     m_resetTime = getIntFromSettings("resetTime", "Reset", 3);
+
+    if (m_lockTime > m_blankTime){
+        qWarning() << "ConfigBackend: Illegal time configuration detected. Adjusting times...";
+        if (m_blankTime > 6)
+            m_lockTime = m_blankTime - 5;
+        else
+            m_blankTime = m_lockTime + 5;
+    }
 
     m_blankBrightness = getIntFromSettings("blankBrightness", "Screensaver", 0);
     m_lockBrightness = getIntFromSettings("lockBrightness", "Screensaver", 4);
