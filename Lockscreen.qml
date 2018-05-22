@@ -74,6 +74,19 @@ Rectangle {
 //                console.debug("unlock (unblank)")
             }
         }
+        onInputEvent: {
+//            console.debug("fast_unblank")
+            if (_idleHelper.lockEnable){
+                _backlight.unblank()
+                locked = true
+            }
+            else {
+                page.width = 0
+                page.height = 0
+                page.visible = false
+                _backlight.unlock()
+            }
+        }
 //        onUnlockSignal: {
 //            page.width = 0
 //            page.height = 0

@@ -293,8 +293,11 @@ void InputNotifier::inputEvent()
     qDebug() << "inputnotifier: inputEvent";
     if (m_lockEnabled) {
         m_stateMutex->lock();
-        m_state = locked;
+        if (m_state == blanked)
+            m_state = locked;
         m_counter = m_timeoutLock;
+        if (m_state == running)
+            m_counter = 0;
         m_stateMutex->unlock();
     }
     else {

@@ -37,20 +37,15 @@ void IdleHelper::start()
     m_idleThread->start();
 
     // connections between notifier/idelHelper and proximity
-//    QObject::connect(m_notifier, &InputNotifier::unblank, m_proximity, &Proximity::disable);
-//    QObject::connect(m_notifier, &InputNotifier::blankTimeout, m_proximity, &Proximity::enable);
     QObject::connect(m_proximity, &Proximity::objectDetected, m_notifier, &InputNotifier::inputEvent);
 
-    //TODO: move decision to qml if unlock or just unblank
-    QObject::connect(m_proximity, &Proximity::objectDetected, this, &IdleHelper::unlock);
+    QObject::connect(m_proximity, &Proximity::objectDetected, this, &IdleHelper::inputEvent);
 
     QTimer::singleShot(0, this, &IdleHelper::reloadConfig);
 }
 
 void IdleHelper::unlock()
 {
-//    QMetaObject::invokeMethod(m_notifier, "unlock", Qt::QueuedConnection);
-//    QMetaObject::invokeMethod(this, "unlock", Qt::QueuedConnection);
     emit unlockNotifier();
 }
 

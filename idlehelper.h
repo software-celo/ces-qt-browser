@@ -39,6 +39,7 @@ signals:
     void unlockNotifier();
     void blankEnableChanged();
     void lockEnableChanged();
+    void inputEvent();
 
 private:
     ConfigBackend* m_cfgBackend;
