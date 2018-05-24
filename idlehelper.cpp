@@ -68,10 +68,16 @@ void IdleHelper::reloadConfig()
     m_resetTime = m_cfgBackend->getResetTime();
     m_dailyReset = m_cfgBackend->getResetEnable();
     m_proximityEnable = m_cfgBackend->getProximityEnable();
+    m_screensaverEnable = m_cfgBackend->getScreensaverEnable();
     if ( m_proximityEnable ) {
         m_proximity->setup(m_cfgBackend->getProximityPWM(), m_cfgBackend->getProximityPWMChip(), \
                        m_cfgBackend->getProximityGPIO(), m_cfgBackend->getPWMPeriod(),m_cfgBackend->getPWMDutyCycle());
     }
+    if ( m_screensaverEnable == false ) {
+        m_notifier->stop();
+        emit inputEvent();
+    }
+
     emit lockEnableChanged();
     emit blankEnableChanged();
     return;

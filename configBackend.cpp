@@ -20,6 +20,12 @@ bool ConfigBackend::getProximityEnable()
 }
 
 
+bool ConfigBackend::getScreensaverEnable()
+{
+    return m_screensaverEnable;
+}
+
+
 int ConfigBackend::getLockTime()
 {
     return m_lockTime;
@@ -126,6 +132,7 @@ void ConfigBackend::readCESConfig()
     m_blankEnable = getBoolFromSettings("blankEnable", "Screensaver", true);
     m_resetEnable = getBoolFromSettings("resetEnable", "Reset", false);
     m_proximityEnable = getBoolFromSettings("proximityEnable", "Proximity", false);
+    m_screensaverEnable = getBoolFromSettings("screensaverEnable", "Screensaver", true);
 
     m_proximityGPIO = getIntFromSettings("proximityGPIO", "Proximity", 89);
     m_proximityPWMChip = getIntFromSettings("proximityPWMChip", "Proximity", 1);
@@ -133,6 +140,8 @@ void ConfigBackend::readCESConfig()
 
     m_pwmDutyCycle = getIntFromSettings("pwmDutyCycle", "Proximity", 4000);
     m_pwmPeriod = getIntFromSettings("pwmPeriod", "Proximity", 27000);
+
+    emit configReady();
 
     return;
 }

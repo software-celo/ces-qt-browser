@@ -62,6 +62,9 @@ public:
     ApplicationEngine(bool keyboard, bool dialog_block);
     ~ApplicationEngine();
 
+public slots:
+    void configBacklight();
+
 private:
     ConfigBackend* m_configBackend;
     IdleHelper* m_idleHelper;

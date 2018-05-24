@@ -51,6 +51,7 @@ private:
     bool m_resetToday;
     int m_resetTime;
     bool m_proximityEnable;
+    bool m_screensaverEnable;
 };
 
 #endif // IDLEHELPER_H

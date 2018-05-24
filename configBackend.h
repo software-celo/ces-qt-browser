@@ -22,6 +22,7 @@ public:
     ~ConfigBackend();
 
     bool getProximityEnable();
+    bool getScreensaverEnable();
     int getProximityGPIO();
     int getProximityPWM();
     int getProximityPWMChip();
@@ -45,9 +46,11 @@ public slots:
     void readCESConfig();
 
 signals:
+    void configReady();
 
 private:
     bool m_proximityEnable;
+    bool m_screensaverEnable;
     bool m_blankEnable;
     bool m_lockEnable;
     bool m_resetEnable;

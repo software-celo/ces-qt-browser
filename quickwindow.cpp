@@ -59,6 +59,10 @@ ApplicationEngine::ApplicationEngine(bool keyboard, bool dialog_block)
     rootContext()->setContextProperty("_utils", new Utils(this));
 
     m_backlight = new Backlight(this);
+
+    QObject::connect(m_configBackend, &ConfigBackend::configReady, this, &ApplicationEngine::configBacklight);
+
+    /*Config the backlight anyway here as the configBackend might already be ready*/
     m_backlight->setBlankBrightness(m_configBackend->getBlankBrightness());
     m_backlight->setLockBrightness(m_configBackend->getLockBrightness());
     m_backlight->setUnlockBrightness(m_configBackend->getUnlockBrightness());
@@ -81,7 +85,15 @@ ApplicationEngine::ApplicationEngine(bool keyboard, bool dialog_block)
     QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
 }
 
-ApplicationEngine::~ApplicationEngine(){
+void ApplicationEngine::configBacklight()
+{
+    m_backlight->setBlankBrightness(m_configBackend->getBlankBrightness());
+    m_backlight->setLockBrightness(m_configBackend->getLockBrightness());
+    m_backlight->setUnlockBrightness(m_configBackend->getUnlockBrightness());
+}
+
+ApplicationEngine::~ApplicationEngine()
+{
     delete m_idleHelper;
     delete m_backlight;
     delete m_configBackend;
