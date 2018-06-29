@@ -17,6 +17,10 @@
 class ConfigBackend : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY( int rotationAngle READ getRotationAngle NOTIFY rotationAngleChanged FINAL )
+    Q_PROPERTY( bool keyboardEnable READ getKeyboardEnable NOTIFY keyboardEnableChanged FINAL )
+    Q_PROPERTY( bool dialogsEnable READ getDialogsEnable NOTIFY dialogsEnableChanged FINAL)
+
 public:
     explicit ConfigBackend(QObject *parent = 0);
     ~ConfigBackend();
@@ -34,12 +38,18 @@ public:
     bool getBlankEnable();
     bool getLockEnable();
 
-    int getResetTime();
-    bool getResetEnable();
-
     int getLockBrightness();
     int getBlankBrightness();
     int getUnlockBrightness();
+
+    int getResetTime();
+    bool getResetEnable();
+
+    int getRotationAngle();
+
+    bool getKeyboardEnable();
+
+    bool getDialogsEnable();
 
 public slots:
     void rebootSystem();
@@ -47,6 +57,9 @@ public slots:
 
 signals:
     void configReady();
+    void rotationAngleChanged();
+    void keyboardEnableChanged();
+    void dialogsEnableChanged();
 
 private:
     bool m_proximityEnable;
@@ -66,6 +79,10 @@ private:
     int m_unlockBrightness;
     int m_lockBrightness;
     int m_blankBrightness;
+
+    int m_rotationAngle;
+    bool m_dialogsEnable;
+    bool m_keyboardEnable;
 
     QSettings* m_settings;
 

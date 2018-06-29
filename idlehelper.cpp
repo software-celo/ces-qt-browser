@@ -7,7 +7,7 @@ IdleHelper::IdleHelper(QObject* parent , ConfigBackend *cfgBackend)
     m_dailyReset = false;
     m_resetToday = true;
     m_resetTimer.setInterval(900000);      // check every 15 minutes
-    m_resetTime = 3;                        // resulting in a reset signal between 3:00AM and 3:15AM
+    m_resetTime = 3;                       // resulting in a reset signal between 3:00AM and 3:15AM
     QObject::connect(&m_resetTimer, &QTimer::timeout, this, &IdleHelper::checkDailyReset);
     m_resetTimer.start();
 
@@ -19,14 +19,14 @@ void IdleHelper::start()
     m_idleThread = new QThread();
     m_notifier = new InputNotifier();
     m_notifier->moveToThread(m_idleThread);
-    // connections between idleThread and notifier
+    /* connections between idleThread and notifier */
     QObject::connect(m_idleThread, &QThread::started, m_notifier, &InputNotifier::start);
     QObject::connect(m_notifier, &InputNotifier::finished, m_idleThread, &QThread::quit);
     QObject::connect(m_notifier, &QObject::destroyed, m_idleThread, &QThread::quit);
     QObject::connect(m_notifier, &InputNotifier::finished, m_notifier, &InputNotifier::deleteLater);
     QObject::connect(m_idleThread, &QThread::finished, m_idleThread, &QThread::deleteLater);
 
-    // connections between notifier and this (idleHelper)
+    /* connections between notifier and this (idleHelper) */
     QObject::connect(m_notifier, &InputNotifier::lockTimeout, this, &IdleHelper::lockTimeout);
     QObject::connect(m_notifier, &InputNotifier::blankTimeout, this, &IdleHelper::blankTimeout);
     QObject::connect(m_notifier, &InputNotifier::unblank, this, &IdleHelper::unblank);
@@ -37,7 +37,7 @@ void IdleHelper::start()
 
     m_idleThread->start();
 
-    // connections between notifier/idelHelper and proximity
+    /* connections between notifier/idelHelper and proximity */
     QObject::connect(m_proximity, &Proximity::objectDetected, m_notifier, &InputNotifier::inputEvent);
 
     QObject::connect(m_proximity, &Proximity::objectDetected, this, &IdleHelper::inputEvent);

@@ -2,7 +2,7 @@
 
 Backlight::Backlight(QObject* parent = 0): QObject(parent)
 {
-    //find valid backlight path; search here:
+    /* find valid backlight path; search here: */
     m_path = "/sys/class/backlight/";
 
     try
@@ -19,10 +19,11 @@ Backlight::Backlight(QObject* parent = 0): QObject(parent)
 
     m_maxBrightness = getMaxBrightness();
 
-    // set lockBrightness to about half maxBrightness,
-    // unlockBrightness to full maxBrightness
-    // and blankBrightness to 0
-    // until they are set to their final values
+    /* set lockBrightness to about half maxBrightness,
+     * unlockBrightness to full maxBrightness
+     * and blankBrightness to 0
+     * until they are set to their final values
+     */
     m_lockBrightness = m_maxBrightness >> 1;
     m_unlockBrightness = m_maxBrightness;
     m_brightness = getBrightness();
@@ -30,15 +31,12 @@ Backlight::Backlight(QObject* parent = 0): QObject(parent)
     m_blankEnable = true;
 
     setBLEnable(1);
-
-// TODO - defined start state?
-//    lock();
 }
 
 
 void Backlight::setLockBrightness(int brightness)
 {
-    // restrict brightness to  0 <-> maxBrightness
+    /* restrict brightness to  0 <-> maxBrightness */
     if (brightness < 0 || brightness > m_maxBrightness) {
         if (brightness < 0)
             brightness = 0;
@@ -54,7 +52,7 @@ void Backlight::setLockBrightness(int brightness)
 
 void Backlight::setUnlockBrightness(int brightness)
 {
-    // restrict brightness to  0 <-> maxBrightness
+    /* restrict brightness to  0 <-> maxBrightness */
     if (brightness < 0 || brightness > m_maxBrightness) {
         if (brightness < 0)
             brightness = 0;
@@ -70,7 +68,7 @@ void Backlight::setUnlockBrightness(int brightness)
 
 void Backlight::setBlankBrightness(int brightness)
 {
-    // restrict brightness to  0 <-> maxBrightness
+    /* restrict brightness to  0 <-> maxBrightness */
     if (brightness < 0 || brightness > m_maxBrightness) {
         if (brightness < 0)
             brightness = 0;
@@ -168,7 +166,7 @@ void Backlight::setBrightness(int brightness)
     blFile.write(QString::number(brightness).toLocal8Bit());
     blFile.close();
 
-    // read back the real current value
+    /* read back the real current value */
     getBrightness();
     return;
 }
@@ -219,7 +217,7 @@ void Backlight::setBLEnable(int value)
         return;
     }
 
-    // invert the value because bl_power is currently inverted
+    /* invert the value because bl_power is currently inverted */
     if (value == 0)
         value = 1;
     else

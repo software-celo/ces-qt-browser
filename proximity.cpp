@@ -34,7 +34,7 @@ void Proximity::setup(int pwm, int pwmChip, int gpio, int period, int dutyCycle)
 
     QString completePWMPath = m_pwmPath + "pwmchip" + m_pwmChip +  "/pwm" + m_pwm;
 
-    // export GPIO if necessary
+    /* export GPIO if necessary */
     if (!QDir(m_gpioPath + "gpio" + m_irqGPIO).exists()) {
         QFile exportGPIOFile(m_gpioPath + "/export");
 
@@ -55,7 +55,7 @@ void Proximity::setup(int pwm, int pwmChip, int gpio, int period, int dutyCycle)
     }
 
 
-    // export PWM if necessary
+    /* export PWM if necessary */
     if (!QDir(completePWMPath).exists()) {
         QFile exportPWMFile(m_pwmPath + "pwmchip" + m_pwmChip + "/export");
 
@@ -76,7 +76,7 @@ void Proximity::setup(int pwm, int pwmChip, int gpio, int period, int dutyCycle)
     }
 
 
-    // set GPIO direction to 'in' and edge to 'falling'
+    /* set GPIO direction to 'in' and edge to 'falling' */
     QFile directionFile(m_gpioPath + "gpio" + m_irqGPIO + "/direction");
 
     if (!directionFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -100,7 +100,7 @@ void Proximity::setup(int pwm, int pwmChip, int gpio, int period, int dutyCycle)
     edgeFile.close();
 
 
-    // set PWM period to sth. like '27000' and duty cycle to about '4000'
+    /* set PWM period to sth. like '27000' and duty cycle to about '4000' */
     QFile periodFile(completePWMPath + "/period");
 
     if (!periodFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -146,7 +146,7 @@ void Proximity::setup(int pwm, int pwmChip, int gpio, int period, int dutyCycle)
         QObject::connect(m_irq, &QSocketNotifier::activated, this, &Proximity::objectDetected);
         QObject::connect(m_irq, &QSocketNotifier::activated, this, &Proximity::startPollMode);
 
-        // start in poll mode to get the first value through polling
+        /* start in poll mode to get the first value through polling */
         m_checkTimer.start();
         checkForObject();
     }
@@ -258,7 +258,7 @@ void Proximity::checkForObject()
          * i.e. wait for the next interrupt
          */
         qDebug() << "Proximity: no object, switching to irq mode";
-        // no need to call enable PWM here
+        /* no need to call enable PWM here */
         enable();
         return;
     }

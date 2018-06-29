@@ -26,7 +26,6 @@ include(deployment.pri)
 
 HEADERS += \
     quickwindow.h \
-    util.h \
     backlight.h \
     inputnotifier.h \
     idlehelper.h \

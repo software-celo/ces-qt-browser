@@ -2,6 +2,11 @@
 
 ConfigBackend::ConfigBackend(QObject *parent) : QObject(parent)
 {
+
+    /* early default init of browser custom properties to prevent property binding loop */
+    m_rotationAngle = 0;
+    m_dialogsEnable = false;
+    m_keyboardEnable = false;
     m_settings = new QSettings(CESFILE, QSettings::IniFormat);
 
     QTimer::singleShot(0, this, SLOT(readCESConfig()));
@@ -110,15 +115,33 @@ int ConfigBackend::getPWMPeriod()
 }
 
 
+int ConfigBackend::getRotationAngle()
+{
+    return m_rotationAngle;
+}
+
+
+bool ConfigBackend::getKeyboardEnable()
+{
+    return m_keyboardEnable;
+}
+
+
+bool ConfigBackend::getDialogsEnable()
+{
+    return m_dialogsEnable;
+}
+
+
 void ConfigBackend::readCESConfig()
 {
     m_lockTime = getIntFromSettings("lockTime", "Screensaver", 30);
     m_blankTime = getIntFromSettings("blankTime", "Screensaver", 3600);
     m_resetTime = getIntFromSettings("resetTime", "Reset", 3);
 
-    if (m_lockTime > m_blankTime){
+    if ( m_lockTime > m_blankTime ) {
         qWarning() << "ConfigBackend: Illegal time configuration detected. Adjusting times...";
-        if (m_blankTime > 6)
+        if ( m_blankTime > 6 )
             m_lockTime = m_blankTime - 5;
         else
             m_blankTime = m_lockTime + 5;
@@ -141,6 +164,21 @@ void ConfigBackend::readCESConfig()
     m_pwmDutyCycle = getIntFromSettings("pwmDutyCycle", "Proximity", 4000);
     m_pwmPeriod = getIntFromSettings("pwmPeriod", "Proximity", 27000);
 
+    int angle = getIntFromSettings("rotationAngle", "Rotation", 0);
+
+    if ( angle == 90 || angle == 180 || angle == 270 )
+       m_rotationAngle = angle;
+    else
+        m_rotationAngle = 0;
+
+    emit rotationAngleChanged();
+
+    m_keyboardEnable = getBoolFromSettings("keyboardEnable", "Keyboard", false);
+    emit keyboardEnableChanged();
+
+    m_dialogsEnable = getBoolFromSettings("dialogsEnable", "Dialogs", false);
+    emit dialogsEnableChanged();
+
     emit configReady();
 
     return;
@@ -151,9 +189,8 @@ bool ConfigBackend::getBoolFromSettings(QString key, QString group, bool preset=
     bool value;
     m_settings->beginGroup(group);
 
-    if ( m_settings->contains(key) ){
+    if ( m_settings->contains(key) )
         value = m_settings->value(key).toBool();
-    }
     else
         value = preset;
 
@@ -168,9 +205,8 @@ int ConfigBackend::getIntFromSettings(QString key, QString group, int preset=0)
     int value;
     m_settings->beginGroup(group);
 
-    if ( m_settings->contains(key) ){
+    if ( m_settings->contains(key) )
         value = m_settings->value(key).toInt();
-    }
     else
         value = preset;
 

@@ -10,8 +10,9 @@ InputNotifier::InputNotifier(QObject *parent) : QObject(parent)
     m_counter = 0;
     m_stateMutex->unlock();
 
-    // set some huge values here until
-    // the final values are set
+    /* set some huge values here until
+     * the final values are set
+     */
     m_timeoutLock = 1000;
     m_timeoutBlank = 2000;
     m_lockEnabled = true;
@@ -148,7 +149,8 @@ void InputNotifier::start()
          FD_ZERO(&readfds);
 
          /* select(2) might alter the fdset, thus freshly set it
-            on every iteration */
+          * on every iteration
+          */
          for (i = 0; m_fds[i] != -1; i++) {
              FD_SET(m_fds[i], &readfds);
              nfds = m_fds[i] >= nfds ? m_fds[i] + 1 : nfds;
@@ -174,12 +176,12 @@ void InputNotifier::start()
              return;
          }
          if (ret == 0){
-             // Timeout
+             /* Timeout */
              qDebug() << "state=" << m_state << ", timeout " << m_counter << "secs";
              switch (m_state) {
                 case running:
                                 if (m_lockEnabled) {
-                                    // Check if lock timeout was reached
+                                    /* Check if lock timeout was reached */
                                     if (m_counter > m_timeoutLock) {
                                         m_stateMutex->lock();
                                         m_state = locked;
@@ -189,7 +191,7 @@ void InputNotifier::start()
                                 }
                                 else {
                                     if (m_blankEnabled) {
-                                        // Check if blank timeout was reached
+                                        /* Check if blank timeout was reached */
                                         if (m_counter > m_timeoutBlank) {
                                             m_stateMutex->lock();
                                             m_state = blanked;
@@ -201,7 +203,7 @@ void InputNotifier::start()
                                 break;
                 case locked:
                                 if (m_blankEnabled) {
-                                    // Check if blank timeout was reached
+                                    /* Check if blank timeout was reached */
                                      if (m_counter > m_timeoutBlank) {
                                          m_stateMutex->lock();
                                          m_state = blanked;
@@ -210,7 +212,7 @@ void InputNotifier::start()
                                      }
                                 }
                                 break;
-                case blanked:   // Reset value back to m_timeoutBlank to prevent overflows and stay >= m_timeoutBlank
+                case blanked:   /* Reset value back to m_timeoutBlank to prevent overflows and stay >= m_timeoutBlank */
                                 m_stateMutex->lock();
                                 m_counter = m_timeoutBlank;
                                 m_stateMutex->unlock();
@@ -222,19 +224,19 @@ void InputNotifier::start()
              }
          }
          else {
-             // Input event was caught
+             /* Input event was caught */
              switch (m_state) {
                  case running:
-                                // Reset idle time
+                                /* Reset idle time */
                                 m_counter = 0;
                                 break;
                  case locked:
-                                // Do nothing.
+                                /* Do nothing. */
                                 m_stateMutex->lock();
                                 m_counter = m_timeoutLock;
                                 m_stateMutex->unlock();
                                 break;
-                 case blanked:  // Unblank!
+                 case blanked:  /* Unblank! */
                                 emit unblank();
                                 if (m_lockEnabled) {
                                     m_stateMutex->lock();
@@ -249,7 +251,7 @@ void InputNotifier::start()
                                     m_stateMutex->unlock();
                                 }
                                 break;
-                 default:       // Do nothing.
+                 default:       /* Do nothing. */
                  case stopped:
                                 QTimer::singleShot(0, this, &InputNotifier::cleanUp);
                                 return;
@@ -273,23 +275,6 @@ void InputNotifier::unlock()
     return;
 }
 
-
-//void InputNotifier::unblank()
-//{
-//    if (m_lockEnabled) {
-//        m_stateMutex->lock();
-//        m_state = locked;
-//        m_counter = m_timeoutLock;
-//        m_stateMutex->unlock();
-//    }
-//    else {
-//        m_stateMutex->lock();
-//        m_state = running;
-//        m_counter = 0;
-//        m_stateMutex->unlock();
-//    }
-//    return;
-//}
 
 void InputNotifier::inputEvent()
 {
