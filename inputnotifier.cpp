@@ -217,8 +217,8 @@ void InputNotifier::start()
                                 break;
                 default:
                 case stopped:
-                    QTimer::singleShot(0, this, &InputNotifier::cleanUp);
-                    return;
+                                QTimer::singleShot(0, this, &InputNotifier::cleanUp);
+                                return;
              }
          }
          else {
@@ -251,8 +251,8 @@ void InputNotifier::start()
                                 break;
                  default:       // Do nothing.
                  case stopped:
-                     QTimer::singleShot(0, this, &InputNotifier::cleanUp);
-                     return;
+                                QTimer::singleShot(0, this, &InputNotifier::cleanUp);
+                                return;
               }
          }
     }
@@ -262,7 +262,7 @@ void InputNotifier::start()
 
 void InputNotifier::unlock()
 {
-    qDebug() << "idlehelper: calling unlock";
+    qDebug() << "inputnotifier: unlock";
     m_stateMutex->lock();
     m_state = running;
     m_counter = 0;
@@ -312,6 +312,7 @@ void InputNotifier::inputEvent()
 
 void InputNotifier::stop()
 {
+    qDebug() << "inputnotifier: stop";
     m_stateMutex->lock();
     m_state = stopped;
     m_stateMutex->unlock();

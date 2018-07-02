@@ -59,7 +59,7 @@ void IrqWorker::sensorIRQ()
     int bytes_read;
     char buf[2];
 
-    /* set powerfail interrupt to falling edge */
+    /* set interrupt to falling edge */
     const char* irqPath = "/sys/class/gpio/gpio89/value";      // ("/sys/class/gpio/gpio" + QString::number(m_gpio) + "/value").toStdString().c_str();
     if ((irq_fd = open(irqPath, O_RDWR)) < 0){
         qDebug() << "IRQ_ERROR: open(value)";
