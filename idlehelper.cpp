@@ -22,8 +22,9 @@ void IdleHelper::start()
     // connections between idleThread and notifier
     QObject::connect(m_idleThread, &QThread::started, m_notifier, &InputNotifier::start);
     QObject::connect(m_notifier, &InputNotifier::finished, m_idleThread, &QThread::quit);
-    QObject::connect(m_notifier, &InputNotifier::finished, m_idleThread, &QThread::deleteLater);
-    QObject::connect(m_idleThread, &QThread::finished, m_notifier, &InputNotifier::deleteLater);
+    QObject::connect(m_notifier, &QObject::destroyed, m_idleThread, &QThread::quit);
+    QObject::connect(m_notifier, &InputNotifier::finished, m_notifier, &InputNotifier::deleteLater);
+    QObject::connect(m_idleThread, &QThread::finished, m_idleThread, &QThread::deleteLater);
 
     // connections between notifier and this (idleHelper)
     QObject::connect(m_notifier, &InputNotifier::lockTimeout, this, &IdleHelper::lockTimeout);

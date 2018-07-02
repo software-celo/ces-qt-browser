@@ -55,6 +55,7 @@ private:
     bool m_blankEnabled;
     void setup();
     bool isCancelled();
+    bool m_earlyStopReq = false;
     enum state {running, locked, blanked, stopped} m_state;
     QMutex* m_stateMutex;
 };

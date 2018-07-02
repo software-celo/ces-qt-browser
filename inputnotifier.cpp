@@ -107,14 +107,13 @@ void InputNotifier::cleanUp()
         free((void*) m_fds);
         m_fds = NULL;
     }
+    QTimer::singleShot(0, this, &InputNotifier::finished);
     return;
 }
 
 
 InputNotifier::~InputNotifier()
 {
-    cleanUp();
-    emit finished();
     return;
 }
 
@@ -139,7 +138,8 @@ void InputNotifier::start()
     struct timeval timeout;
 
     m_stateMutex->lock();
-    m_state = locked;
+    if (!m_earlyStopReq)
+        m_state = locked;
     m_counter = m_timeoutLock;
     m_stateMutex->unlock();
     setup();
@@ -256,6 +256,7 @@ void InputNotifier::start()
               }
          }
     }
+    QTimer::singleShot(0, this, &InputNotifier::cleanUp);
     return;
 }
 
@@ -264,8 +265,10 @@ void InputNotifier::unlock()
 {
     qDebug() << "inputnotifier: unlock";
     m_stateMutex->lock();
-    m_state = running;
-    m_counter = 0;
+    if (m_state != stopped){
+        m_state = running;
+        m_counter = 0;
+    }
     m_stateMutex->unlock();
     return;
 }
@@ -315,6 +318,7 @@ void InputNotifier::stop()
     qDebug() << "inputnotifier: stop";
     m_stateMutex->lock();
     m_state = stopped;
+    m_earlyStopReq = true;
     m_stateMutex->unlock();
     return;
 }
