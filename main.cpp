@@ -1,7 +1,7 @@
 /***************************************************************************************************************
 ** Copyright (c) 2015-2018 Christ Electronic Systems GmbH
 ** Copyright (c) 2015-2018 Peter Fink <pfink@christ-es.de>
-** Copyright (c) 2018      Steffen Kothe <skothe@christ-es.de>
+** Copyright (c) 2017-2018 Steffen Kothe <skothe@christ-es.de>
 **
 ** Description: QtWebEngine based Browser with integration of QT Virtualkeyboard and Rotation
 **
@@ -12,7 +12,7 @@
 **
 **  @Description/Changes:
 **               Added c++ code for enable/disbale keyboard, dialogs
-**               Added c++ code for 0,90,180,270,360 degree rotation of window
+**               Added c++ code for 0,90,180,270 degree rotation of window
 **               Added activated text selection function for window (text not selectable)
 **               Added fixed qml/javascript function, performing context shift
 **               Rework code (fixed bugs, removed obsolote files, removed environment settings for keyboard and dialogs)rd

@@ -101,17 +101,8 @@ ApplicationEngine::~ApplicationEngine()
 QUrl ApplicationEngine::urlFromUserInput(const QString& userInput)
 {
     QUrl url = QUrl(userInput);
-    bool exists = QFileInfo(QUrl(userInput).path()).exists();
+    //  bool exists = QFileInfo(QUrl(userInput).path()).exists();
 
-
-    if(url.isValid()){
-        //  qDebug() << "URL is valid";
-        //TODO: What's this? Is Errorhandling needed or not?!?
-    }
-    if (exists){
-        //  qDebug() << "File exists";
-        //TODO: Errorhandling?!?
-    }
     return url;
 }
 

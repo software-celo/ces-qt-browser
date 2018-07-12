@@ -52,12 +52,13 @@ Window {
         height: parent.height
         width:  parent.width
         rotation: _configBackend.rotationAngle
-        /*  true = keyboard activated, false= keyboard deactivated      | Default: false
+
+        /*  true = keyboard activated, false= keyboard deactivated
          *  Do not set this value manual here!
          */
         property bool keyboardEnable: _configBackend.keyboardEnable
 
-        /*  true = dialogs used, false = dialogs blocked                | Default: true
+        /*  true = dialogs used, false = dialogs blocked
          *  Do not set this value manual here!
          */
         property bool dialogsEnable: _configBackend.dialogsEnable
@@ -93,28 +94,32 @@ Window {
              * This error page will called instead.
              */
             onLoadingChanged: {
+                webEngineView.LoadStartedStatus
                 switch(loadRequest.status){
-                    case 0:{
-                        /* console.log("Load started"); */
+                    case WebEngineView.LoadStartedStatus:  {
+//                        console.log("Load started");
                         break;
                     }
-                    case 1:{
-                        /* console.log("Load stopped"); */
+                    case WebEngineView.LoadStoppedStatus: {
+//                         console.log("Load stopped");
                          disableTextSelection();
                         break;
                     }
-                    case 2:{
-                        /* console.log("Load succeded"); */
+                    case WebEngineView.LoadSucceededStatus: {
+//                        console.log("Load succeded");
+//                        console.log(webEngineView.url);
                         disableTextSelection();
                         break;
                     }
-                    case 3:{
-                        console.log("Go to Errorpage:" + webEngineView.erlPath);
-                        webEngineView.url = webEngineView.erlPath + "?edomain=" + loadRequest.errorDomain + "&ecode=" + loadRequest.errorCode ;
-                        break;
-                    }
                     default:{
-                        //TODO: default -> error?
+                    }
+                    case WebEngineView.LoadFailedStatus: {
+                        /* For more information about the error code refer to this page
+                         *   https://cs.chromium.org/chromium/src/net/base/net_error_list.h
+                         */
+//                        console.log("Errormessage: " + loadRequest.errorString);
+                        webEngineView.url = webEngineView.erlPath + "?edomain=" + convertErrorDomainToString(loadRequest.errorDomain) + "&ecode=" + (-1)*loadRequest.errorCode ;
+                        break;
                     }
                 }
             }
@@ -138,12 +143,50 @@ Window {
 
     Component.onCompleted: {
         webBrowserConfig();
-        /* Disable popup list for language key on keyboard */
-        keyboardPanel.keyboard.style.languagePopupListEnabled = false;
-        InputContext.inputEngine.virtualKeyClicked.connect(toggleShiftKeyHandler);
         initKeyboard();
         initDialogs();
         rotateView();
+
+    }
+
+    /* Function converts the error domain code to an string representation
+     * Return is a string
+     */
+    function convertErrorDomainToString(edomaincode){
+        var errordesc;
+        switch(edomaincode){
+            default:{
+            }
+            case WebEngineView.NoErrorDomain:{
+                errordesc ="UNKNOWN ERROR";
+                break;
+            }
+            case WebEngineView.InternalErrorDomain:{
+                errordesc ="QT INTERNAL ERROR";
+                break;
+            }
+            case WebEngineView.ConnectionErrorDomain:{
+                errordesc ="NETWORK CONNECTION ERROR";
+                break;
+            }
+            case WebEngineView.CertificateErrorDomain:{
+                errordesc ="SSL/TLS CERTIFICATE ERROR";
+                break;
+            }
+            case WebEngineView.HttpErrorDomain:{
+                errordesc ="HTTP CONNECTION ERROR";
+                break;
+            }
+            case WebEngineView.FtpErrorDomain:{
+                errordesc ="FTP CONNECTION ERROR";
+                break;
+            }
+            case WebEngineView.DnsErrorDomain:{
+                errordesc ="DNS CONNECTION ERROR";
+                break;
+            }
+        }
+        return errordesc;
     }
 
     /* Function to reload/load an url to WebEngineView
@@ -158,9 +201,9 @@ Window {
      * to disabled "Shiftkey"
      */
     function toggleShiftKeyHandler(key,text,modifiers){
-        if(key !== 16777248 && key !== 33554431 ){
-            if(InputContext.uppercase === true){
-                if(InputContext.capsLock === false){
+        if(key !== Qt.Key_Shift && key !== Qt.Key_unknown){
+            if(InputContext.uppercase){
+                if(!InputContext.capsLock){
                   InputContext.shift = false;
                 }
             }
@@ -181,7 +224,7 @@ Window {
         WebEngine.defaultProfile.persistentCookiesPolicy = 0;	/* No Persistent cookies */
         WebEngine.defaultProfile.offTheRecord = true;           /* Hold everything in RAM memory --> disable disk */
 
-        if( WebEngine.defaultProfile.offTheRecord === true){
+        if( WebEngine.defaultProfile.offTheRecord){
             /* console.log("Cache in RAM: Activated") */
         }else{
             /* console.log("Cache in RAM: Deactivated"); */
@@ -243,9 +286,8 @@ Window {
      * Property is set to the current rotation
      * If rotation is already set, rotation angle is returned without any rotation action
      *
-     * On call, function returns the current/setted rotation angle
      *
-     * Supported angles:                    0,90,180,270,360
+     * Supported angles:                    0,90,180,270
      * On default or not supported angles:  0
      */
     function rotateView(){
@@ -306,6 +348,7 @@ Window {
         }
         else{
             console.log("Warning: Dialogs not handled yet!")
+            request.dialogReject();
         }
     }
 
@@ -313,6 +356,10 @@ Window {
      * and connect a  keyhandler for customized key actions to keyboard
      */
     function initKeyboard(){
+        /* Disable popup list for language key on keyboard */
+        InputContext.inputEngine.virtualKeyClicked.connect(toggleShiftKeyHandler);
+        keyboardPanel.keyboard.style.languagePopupListEnabled = false;
+        lockscreen.lockedScreen.connect(Qt.inputMethod.hide);
         Qt.inputMethod.visibleChanged.connect(qtkeyboardHandler);
         InputContext.inputEngine.activeKeyChanged.connect(pressedKeyHandler);
     }
@@ -327,15 +374,15 @@ Window {
         }
 
         /* Check if Enterkey is pressed */
-        if(k === 16777220){
+        if(k === Qt.Key_Return){
             /* If shift is false, emulate tabulator */
             if(InputContext.shift === false){
-                InputContext.sendKeyClick(16777217, "", 0)
-                InputContext.sendKeyClick(0x01000014, "", 0)
+                InputContext.sendKeyClick(Qt.Key_Tab, "", 0)
+                InputContext.sendKeyClick(Qt.Key_Right, "", 0)
             }
             /* If shift is true, send newline character */
             else{
-                InputContext.sendKeyClick(0x01000006, "\n", 0)
+                InputContext.sendKeyClick(Qt.Key_Insert, "\n", 0)
             }
         }
     }
@@ -386,9 +433,8 @@ Window {
      *              - webEngineView height is restored to fullscreen height (no keyboard visible)
      */
     function qtkeyboardHandler(){
-        if(!webEngineViewRect.keyboardEnable){
+        if(!webEngineViewRect.keyboardEnable)
             return;
-        }
 
         if(Qt.inputMethod.visible){
             webEngineView.height = webEngineView.height - Qt.inputMethod.keyboardRectangle.height

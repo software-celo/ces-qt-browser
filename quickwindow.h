@@ -55,6 +55,8 @@
 #ifndef QUICKWINDOW_H
 #define QUICKWINDOW_H
 
+#define QT_NO_DEBUG_OUTPUT 1
+
 #include <QQmlApplicationEngine>
 #include <QTextStream>
 #include <QFileInfo>

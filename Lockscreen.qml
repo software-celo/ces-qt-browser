@@ -13,6 +13,8 @@ Rectangle {
     property int windowHeight: 0
     property bool locked: true
 
+    signal lockedScreen();
+
     Component.onCompleted: {
         startTimer.running = true
     }
@@ -35,10 +37,12 @@ Rectangle {
             if (_idleHelper.lockEnable){
                 page.width = windowWidth
                 page.height = windowHeight
+                page.visible=true
                 lockedLogo.opacity = 0.6
                 page.opacity = 0.4
                 _backlight.lock()
                 locked = true
+                page.lockedScreen()
 //                console.debug("lockTimeout")
             }
             else {
@@ -53,7 +57,8 @@ Rectangle {
                 page.opacity = 0.4
                 page.visible = true
                 _backlight.blank()
-                locked = false
+                locked = true
+                page.lockedScreen()
 //                console.debug("blankTimeout")
             }
             else {
@@ -63,8 +68,15 @@ Rectangle {
         onUnblank: {
 //            console.debug("unblank")
             if (_idleHelper.lockEnable){
-                _backlight.unblank()
-                locked = true
+                if(locked){
+                    _backlight.unblank()
+                    page.lockedScreen()
+                }else{
+                    page.width = 0
+                    page.height = 0
+                    page.visible = false
+                    _backlight.unlock()
+                }
             }
             else {
                 page.width = 0
@@ -76,24 +88,19 @@ Rectangle {
         }
         onInputEvent: {
 //            console.debug("fast_unblank")
-            if (_idleHelper.lockEnable){
-                _backlight.unblank()
-                locked = true
+            if(_idleHelper.lockEnable && locked){
+                    _backlight.unblank()
+                page.lockedScreen()
             }
             else {
                 page.width = 0
                 page.height = 0
                 page.visible = false
+                locked = false
                 _backlight.unlock()
+                _idleHelper.unlock()
             }
         }
-//        onUnlockSignal: {
-//            page.width = 0
-//            page.height = 0
-//            page.visible = false
-//            _backlight.unlock()
-//            console.debug("unlock")
-//        }
     }
 
     ParallelAnimation {
@@ -144,17 +151,20 @@ Rectangle {
         id: mouseLockArea
         anchors.fill: page
         onClicked: {
-            if (_idleHelper.lockEnable == true){
-                if (locked == false){
+            console.log("Click locked=" + locked);
+            if (_idleHelper.lockEnable){
+                if (!locked){
                     page.width = 0
                     page.height = 0
                     page.visible = true
                     _backlight.unblank()
+                    page.lockedScreen()
                 }
                 else {
                     page.width = 0
                     page.height = 0
                     page.visible = false
+                    locked=false
                     _backlight.unlock()
                     _idleHelper.unlock()
                 }
