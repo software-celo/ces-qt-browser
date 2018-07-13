@@ -37,50 +37,94 @@
 **
 ** $QT_END_LICENSE$
 **
+**
+** Edited by:
+**
+** Author: Peter Fink
+** Author: Steffen Kothe
+** Description: QtWebEngine based Browser with integration of Qt Virtualkeyboard
+** Company: Christ Electronic System GmbH
+** Used License: LGPLv3
+** Copyright (C) 2017-2018 Christ Electronic Systems GmbH
+**
+** For more details: main.cpp
+**
 ****************************************************************************/
 
 #include "quickwindow.h"
 
-#include "util.h"
-
-#include <QFileInfo>
-#include <QObject>
-#include <QQmlContext>
-#include <QQmlEngine>
-#include <QUrl>
-
-class Utils : public QObject {
-    Q_OBJECT
-public:
-    Utils(QObject* parent = 0) : QObject(parent) { }
-    Q_INVOKABLE static QUrl fromUserInput(const QString& userInput) { return urlFromUserInput(userInput); }
-};
-
-#include "quickwindow.moc"
 
 ApplicationEngine::ApplicationEngine()
 {
-    rootContext()->setContextProperty("utils", new Utils(this));
-    qInfo("Keyboard disabled");
-    load(QUrl("qrc:/main_nok.qml"));
-    QMetaObject::invokeMethod(rootObjects().first(), "blockDialogs", Q_ARG(QVariant, true));
+    m_configBackend = new ConfigBackend(this);
+    m_idleHelper = new IdleHelper(this, m_configBackend);
+    m_backlight = new Backlight(this);
+
+    QObject::connect(m_configBackend, &ConfigBackend::configReady, this, &ApplicationEngine::configBacklight);
+
+    /*Config the backlight anyway here as the configBackend might already be ready*/
+    m_backlight->setBlankBrightness(m_configBackend->getBlankBrightness());
+    m_backlight->setLockBrightness(m_configBackend->getLockBrightness());
+    m_backlight->setUnlockBrightness(m_configBackend->getUnlockBrightness());
+
+    rootContext()->setContextProperty("_backlight", m_backlight);
+    rootContext()->setContextProperty("_idleHelper", m_idleHelper);
+    rootContext()->setContextProperty("_configBackend", m_configBackend);
+
+    load(QUrl("qrc:/main.qml"));
+
+    /*Calls a method, which loads a url to webengine*/
     QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
 }
 
-ApplicationEngine::ApplicationEngine(bool keyboard, bool dialog_block)
+
+void ApplicationEngine::configBacklight()
 {
-    rootContext()->setContextProperty("utils", new Utils(this));
-    if(keyboard ==  true){
-        qInfo("Keyboard enabled");
-		load(QUrl("qrc:/main.qml"));
-	}else{
-        qInfo("Keyboard disabled");
-		load(QUrl("qrc:/main_nok.qml"));
-	}
+    m_backlight->setBlankBrightness(m_configBackend->getBlankBrightness());
+    m_backlight->setLockBrightness(m_configBackend->getLockBrightness());
+    m_backlight->setUnlockBrightness(m_configBackend->getUnlockBrightness());
+}
 
-    /*Calls a method, which handle the dialog request*/
-    QMetaObject::invokeMethod(rootObjects().first(), "blockDialogs", Q_ARG(QVariant, dialog_block));
 
-    /*Calls a method, which load a url to webengine*/
-    QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
+ApplicationEngine::~ApplicationEngine()
+{
+    delete m_idleHelper;
+    delete m_backlight;
+    delete m_configBackend;
+}
+
+
+/* Return a QUrl object and check if it's a file
+ *
+ * Always return a QUrl Object depending on userinput (path or url)
+*/
+QUrl ApplicationEngine::urlFromUserInput(const QString& userInput)
+{
+    QUrl url = QUrl(userInput);
+    //  bool exists = QFileInfo(QUrl(userInput).path()).exists();
+
+    return url;
+}
+
+
+/* Try to find possible Start URLs in passed arguments to application
+ *
+ * Check for non option flags and try to find an valid url
+ *
+ * In case of success, valid url is returned, else error landing page path is
+ * returned.
+*/
+QUrl ApplicationEngine::startupUrl()
+{
+    QUrl ret;
+    QStringList args(qApp->arguments());
+    args.takeFirst();
+    Q_FOREACH (const QString& arg, args) {
+        if (arg.startsWith(QLatin1Char('-')))
+             continue;
+        ret = this->urlFromUserInput(arg);
+        if (ret.isValid())
+            return ret;
+    }
+    return QUrl(QStringLiteral("file:///usr/share/ces-qt-browser/erl/error.html"));
 }

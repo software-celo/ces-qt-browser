@@ -8,9 +8,13 @@ static {
 }
 
 
-SOURCES += \
-    main.cpp \
-    quickwindow.cpp
+SOURCES += main.cpp \
+    quickwindow.cpp \
+    backlight.cpp \
+    inputnotifier.cpp \
+    idlehelper.cpp \
+    configBackend.cpp \
+    proximity.cpp
 
 RESOURCES += qml.qrc
 
@@ -21,6 +25,9 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    util.h \
-    quickwindow.h
-
+    quickwindow.h \
+    backlight.h \
+    inputnotifier.h \
+    idlehelper.h \
+    configBackend.h \
+    proximity.h

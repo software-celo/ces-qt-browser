@@ -37,13 +37,41 @@
 **
 ** $QT_END_LICENSE$
 **
+** Edited by:
+**
+** Author: Peter Fink
+** Author: Steffen Kothe
+** Description: QtWebEngine based Browser with integration of QT Virtualkeyboard
+** Company: Christ Electronic System GmbH
+** Used License: LGPLv3
+** Copyright (C) 2017-2018 Christ Electronic Systems GmbH
+**
+**
+**
+** For more details: main.cpp
+**
 ****************************************************************************/
 
 #ifndef QUICKWINDOW_H
 #define QUICKWINDOW_H
 
+#define QT_NO_DEBUG_OUTPUT 1
+
 #include <QQmlApplicationEngine>
 #include <QTextStream>
+#include <QFileInfo>
+#include <QObject>
+#include <QQmlContext>
+#include <QQmlEngine>
+#include <QUrl>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QFileInfo>
+#include <QtCore/QUrl>
+#include <QtCore/QStringList>
+#include <QDebug>
+#include "backlight.h"
+#include "idlehelper.h"
+#include "configBackend.h"
 
 class QWebEngineView;
 
@@ -51,7 +79,19 @@ class ApplicationEngine : public QQmlApplicationEngine {
     Q_OBJECT
 public:
     ApplicationEngine();
-    ApplicationEngine(bool keyboard, bool dialog_block);
+    ~ApplicationEngine();
+
+private:
+    QUrl startupUrl();
+    QUrl urlFromUserInput(const QString& userInput);
+
+public slots:
+    void configBacklight();
+
+private:
+    ConfigBackend* m_configBackend;
+    IdleHelper* m_idleHelper;
+    Backlight* m_backlight;
 };
 
 #endif // QUICKWINDOW_H
