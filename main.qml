@@ -199,14 +199,49 @@ Window {
      *
      * After emitting an uppercase letter, function toggles from activated "Shiftkey"
      * to disabled "Shiftkey"
+     *
+     *
+     * Important notes:
+     *
+     *      Shift toggle on uppercase letters does not work or is not supported on following tested html standard input types:
+     *          <input type="password" ><br>
+     *          <input type="search" ><br>
+     *          <input type="url" ><br>
+     *
+     *      The expected behaviour of this types is:
+     *           NO_SHIFT --> CAPS_LOCK                                       (only caps lock and no shift)
+     *
+     *      A possible solution is included and commented out in the function below. The behaviour for the restricted types would be then:
+     *           NO_SHIFT --> CAPS_LOCK --> (character input) --> NO_SHIFT    (CAPS_LOCK toggling )
+     *
+     *
+     *      The expected behaviour for the other text based types is:
+     *          NO_SHIFT --> SHIFT_KEY --> SHIFT_KEY --> CAPS_LOCK            (activate caps lock)
+     *          NO_SHIFT --> SHIFT_KEY --> (character input) --> NO_SHIFT     (Toggle shift key)
+     *
+     *      A redefinition (javascript,typescript) of html input types could change the shift toggle behaviour of the qtvirtualkeyboard too.
+     *
+     *      For more information about the input types and the behaviour refer to this pages:
+     *              http://doc.qt.io/qt-5/qt.html#InputMethodHint-enum
+     *              http://doc.qt.io/qt-5/qml-qtquick-textinput.html#inputMethodHints-prop
+     *              http://doc.qt.io/qt-5/qml-qtquick-virtualkeyboard-inputcontext.html#inputMethodHints-prop
+     *
+     *
      */
     function toggleShiftKeyHandler(key,text,modifiers){
+        /* console.log("input method hints:" + InputContext.inputMethodHints.toString(16)); */
         if(key !== Qt.Key_Shift && key !== Qt.Key_unknown){
             if(InputContext.uppercase){
                 if(!InputContext.capsLock){
                   InputContext.shift = false;
                 }
             }
+            /* Toggles CAPS_LOCK state to NO_SHIFT
+                if((InputContext.inputMethodHints & Qt.ImhNoAutoUppercase) === Qt.ImhNoAutoUppercase && InputContext.capsLock === true){
+                    InputContext.shift = false;
+                    InputContext.capsLock = false;
+                }
+            */
         }
     }
 
@@ -357,11 +392,11 @@ Window {
      */
     function initKeyboard(){
         /* Disable popup list for language key on keyboard */
-        InputContext.inputEngine.virtualKeyClicked.connect(toggleShiftKeyHandler);
         keyboardPanel.keyboard.style.languagePopupListEnabled = false;
         lockscreen.lockedScreen.connect(Qt.inputMethod.hide);
         Qt.inputMethod.visibleChanged.connect(qtkeyboardHandler);
         InputContext.inputEngine.activeKeyChanged.connect(pressedKeyHandler);
+        InputContext.inputEngine.virtualKeyClicked.connect(toggleShiftKeyHandler);
     }
 
     /* Handler for pressed key events
