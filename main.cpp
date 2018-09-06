@@ -57,5 +57,10 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
     ApplicationEngine appEngine;
 
+
+    /*  Disables cursor/mouse symbol in application */
+    //  app.setOverrideCursor(QCursor(Qt::BlankCursor));
+
+
     return app.exec();
 }
