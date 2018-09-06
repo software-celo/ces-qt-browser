@@ -410,13 +410,8 @@ Window {
 
         /* Check if Enterkey is pressed */
         if(k === Qt.Key_Return){
-            /* If shift is false, emulate tabulator */
-            if(InputContext.shift === false){
-                InputContext.sendKeyClick(Qt.Key_Tab, "", 0)
-                InputContext.sendKeyClick(Qt.Key_Right, "", 0)
-            }
-            /* If shift is true, send newline character */
-            else{
+            /* If shift is pressed, a newline symbol will be sent*/
+            if(InputContext.shift){
                 InputContext.sendKeyClick(Qt.Key_Insert, "\n", 0)
             }
         }
