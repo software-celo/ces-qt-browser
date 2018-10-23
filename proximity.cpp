@@ -19,7 +19,7 @@ Proximity::~Proximity()
 
     if (m_irqFile != NULL) {
         m_irqFile->close();
-        delete m_irq;
+        delete m_irqFile;
     }
 }
 
@@ -125,12 +125,15 @@ void Proximity::setup(int pwm, int pwmChip, int gpio, int period, int dutyCycle)
 
     if (m_statusOK) {
 
-        if (m_irq != NULL)
+        if (m_irq != NULL){
             delete m_irq;
+            m_irq = NULL;
+        }
 
         if (m_irqFile != NULL) {
             m_irqFile->close();
-            delete m_irq;
+            delete m_irqFile;
+            m_irqFile = NULL;
         }
 
         m_irqFile = new QFile(m_gpioPath + "gpio" + m_irqGPIO + "/value");

@@ -62,6 +62,7 @@ bool IdleHelper::getLockEnable()
 
 void IdleHelper::reloadConfig()
 {
+    QObject::connect(m_cfgBackend, &ConfigBackend::configChanged, this, &IdleHelper::reloadConfig, Qt::UniqueConnection);
     m_notifier->setLockEnable(m_cfgBackend->getLockEnable());
     m_notifier->setBlankEnable(m_cfgBackend->getBlankEnable());
     m_notifier->setTimeoutLock(m_cfgBackend->getLockTime());

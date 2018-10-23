@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QFileSystemWatcher>
 #include <unistd.h>
 #include <linux/reboot.h>
 #include <sys/reboot.h>
@@ -56,7 +57,7 @@ public slots:
     void readCESConfig();
 
 signals:
-    void configReady();
+    void configChanged();
     void rotationAngleChanged();
     void keyboardEnableChanged();
     void dialogsEnableChanged();
@@ -85,6 +86,7 @@ private:
     bool m_keyboardEnable;
 
     QSettings* m_settings;
+    QFileSystemWatcher m_configWatcher;
 
     int getIntFromSettings(QString key, QString group, int preset);
     bool getBoolFromSettings(QString key, QString group, bool preset);

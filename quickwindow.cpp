@@ -60,7 +60,7 @@ ApplicationEngine::ApplicationEngine()
     m_idleHelper = new IdleHelper(this, m_configBackend);
     m_backlight = new Backlight(this);
 
-    QObject::connect(m_configBackend, &ConfigBackend::configReady, this, &ApplicationEngine::configBacklight);
+    QObject::connect(m_configBackend, &ConfigBackend::configChanged, this, &ApplicationEngine::configBacklight);
 
     /*Config the backlight anyway here as the configBackend might already be ready*/
     m_backlight->setBlankBrightness(m_configBackend->getBlankBrightness());

@@ -9,6 +9,9 @@ ConfigBackend::ConfigBackend(QObject *parent) : QObject(parent)
     m_keyboardEnable = false;
     m_settings = new QSettings(CESFILE, QSettings::IniFormat);
 
+    m_configWatcher.addPath(CESFILE);
+    QObject::connect(&m_configWatcher, &QFileSystemWatcher::fileChanged, this, &ConfigBackend::readCESConfig);
+
     QTimer::singleShot(0, this, SLOT(readCESConfig()));
 }
 
@@ -135,6 +138,8 @@ bool ConfigBackend::getDialogsEnable()
 
 void ConfigBackend::readCESConfig()
 {
+    m_settings->sync();
+
     m_lockTime = getIntFromSettings("lockTime", "Screensaver", 30);
     m_blankTime = getIntFromSettings("blankTime", "Screensaver", 3600);
     m_resetTime = getIntFromSettings("resetTime", "Reset", 3);
@@ -179,7 +184,7 @@ void ConfigBackend::readCESConfig()
     m_dialogsEnable = getBoolFromSettings("dialogsEnable", "Dialogs", false);
     emit dialogsEnableChanged();
 
-    emit configReady();
+    emit configChanged();
 
     return;
 }
