@@ -7,6 +7,7 @@ ConfigBackend::ConfigBackend(QObject *parent) : QObject(parent)
     m_rotationAngle = 0;
     m_dialogsEnable = false;
     m_keyboardEnable = false;
+    m_lockImagePath = "/usr/share/ces-qt-browser/lock.svg";
     m_settings = new QSettings(CESFILE, QSettings::IniFormat);
 
     m_configWatcher.addPath(CESFILE);
@@ -136,6 +137,12 @@ bool ConfigBackend::getDialogsEnable()
 }
 
 
+QString ConfigBackend::getLockImagePath()
+{
+    return m_lockImagePath;
+}
+
+
 void ConfigBackend::readCESConfig()
 {
     m_settings->sync();
@@ -161,6 +168,10 @@ void ConfigBackend::readCESConfig()
     m_resetEnable = getBoolFromSettings("resetEnable", "Reset", false);
     m_proximityEnable = getBoolFromSettings("proximityEnable", "Proximity", false);
     m_screensaverEnable = getBoolFromSettings("screensaverEnable", "Screensaver", true);
+
+    m_lockImagePath = getStringFromSettings("lockImagePath", "Screensaver", "/usr/share/ces-qt-browser/lock.svg");
+
+    emit lockImagePathChanged();
 
     m_proximityGPIO = getIntFromSettings("proximityGPIO", "Proximity", 89);
     m_proximityPWMChip = getIntFromSettings("proximityPWMChip", "Proximity", 1);
@@ -188,6 +199,23 @@ void ConfigBackend::readCESConfig()
 
     return;
 }
+
+
+QString ConfigBackend::getStringFromSettings(QString key, QString group, QString preset="")
+{
+    QString value;
+    m_settings->beginGroup(group);
+
+    if ( m_settings->contains(key) )
+        value = m_settings->value(key).toString();
+    else
+        value = preset;
+
+    m_settings->endGroup();
+
+    return value;
+}
+
 
 bool ConfigBackend::getBoolFromSettings(QString key, QString group, bool preset=false)
 {
@@ -222,6 +250,7 @@ int ConfigBackend::getIntFromSettings(QString key, QString group, int preset=0)
 
     return value;
 }
+
 
 void ConfigBackend::rebootSystem()
 {

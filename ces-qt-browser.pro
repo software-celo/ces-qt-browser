@@ -7,7 +7,6 @@ static {
     QTPLUGIN += qtvirtualkeyboardplugin
 }
 
-
 SOURCES += main.cpp \
     quickwindow.cpp \
     backlight.cpp \

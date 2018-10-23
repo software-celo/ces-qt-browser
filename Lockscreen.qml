@@ -136,7 +136,7 @@ Rectangle {
 
     Image {
         id: lockedLogo
-        source: "web_locked.svg"
+        source: "file:" + _configBackend.lockImagePath
         sourceSize.height: parent.height < 800 ? 450 : (450/800) * parent.height
         sourceSize.width: parent.width < 1280 ? 450 : (450/1280) * parent.width
         fillMode: Image.PreserveAspectFit

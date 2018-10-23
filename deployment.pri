@@ -10,5 +10,12 @@ unix:!android {
     INSTALLS += target
 }
 
+unix:!android {
+    content.path = /usr/share/ces-qt-browser
+    content.files = content/*.svg
+
+    INSTALLS += content
+}
+
 export(INSTALLS)
 

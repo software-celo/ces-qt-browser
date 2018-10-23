@@ -2,6 +2,5 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Lockscreen.qml</file>
-        <file>web_locked.svg</file>
     </qresource>
 </RCC>
