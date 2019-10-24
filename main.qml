@@ -22,6 +22,7 @@ Window {
     visible: true
     height: 480
     width: 800
+    visibility: Window.FullScreen
 
     Connections {
         target: _idleHelper
@@ -63,6 +64,11 @@ Window {
          */
         property bool dialogsEnable: _configBackend.dialogsEnable
 
+        /* true = insert <meta  name="viewport" content="initial-scale=1">
+         * to default HEAD of html page after successful load of page
+         */
+        property bool initialScaleEnable: _configBackend.initialScaleEnable
+
         onRotationChanged: {
             rotateView();
         }
@@ -97,18 +103,21 @@ Window {
                 webEngineView.LoadStartedStatus
                 switch(loadRequest.status){
                     case WebEngineView.LoadStartedStatus:  {
-//                        console.log("Load started");
+                        /* console.log("Load started"); */
                         break;
                     }
                     case WebEngineView.LoadStoppedStatus: {
-//                         console.log("Load stopped");
-                         disableTextSelection();
+                        /* console.log("Load stopped"); */
+                        disableTextSelection();
                         break;
                     }
                     case WebEngineView.LoadSucceededStatus: {
-//                        console.log("Load succeded");
-//                        console.log(webEngineView.url);
+                        /* console.log("Load succeded"); */
+                        /* console.log(webEngineView.url); */
                         disableTextSelection();
+                        if(true === webEngineViewRect.initialScaleEnable){
+                            initialScaleHead();
+                        }
                         break;
                     }
                     default:{
@@ -117,7 +126,7 @@ Window {
                         /* For more information about the error code refer to this page
                          *   https://cs.chromium.org/chromium/src/net/base/net_error_list.h
                          */
-//                        console.log("Errormessage: " + loadRequest.errorString);
+                        /* console.log("Errormessage: " + loadRequest.errorString); */
                         webEngineView.url = webEngineView.erlPath + "?edomain=" + convertErrorDomainToString(loadRequest.errorDomain) + "&ecode=" + (-1)*loadRequest.errorCode ;
                         break;
                     }
@@ -269,6 +278,23 @@ Window {
         WebEngine.defaultProfile.httpCacheMaximumSize = 4000000;
         WebEngine.settings.errorPageEnabled = false;
         WebEngine.settings.showScrollBars = false;
+    }
+
+    /* By default, this functions injects a smart piece of code to a html dom of a successful loaded html page,
+     * and insert a tag <meta name="viewport" content="initial-scale=1"> to fix the browser resolution on startup
+     * to the maximum display screen size on eglfs framebuffer
+     * BUG: Codesys 3.5.14 --> wrong scaling on startup
+     */
+    function initialScaleHead(){
+        webEngineView.runJavaScript(
+            "setTimeout( () => { " +
+            "var head = document.head;" +
+            "var node = document.createElement('meta');" +
+            "node.setAttribute('name','viewport');" +
+            "node.setAttribute('content','initial-scale=1,max-scale=1,user-scalable=no');" +
+            "head.appendChild(node); },250);"
+            ,function(){}
+        )
     }
 
     /* By default, this function injects a smart piece of code to a loaded html page (DOM tree),

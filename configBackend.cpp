@@ -136,6 +136,10 @@ bool ConfigBackend::getDialogsEnable()
     return m_dialogsEnable;
 }
 
+bool ConfigBackend::getInitialScaleEnable()
+{
+    return m_initialScaleEnable;
+}
 
 QString ConfigBackend::getLockImagePath()
 {
@@ -194,6 +198,9 @@ void ConfigBackend::readCESConfig()
 
     m_dialogsEnable = getBoolFromSettings("dialogsEnable", "Dialogs", false);
     emit dialogsEnableChanged();
+
+    m_initialScaleEnable = getBoolFromSettings("initialScaleEnable", "Browser", false);
+    emit initialScaleEnableChanged();
 
     emit configChanged();
 
