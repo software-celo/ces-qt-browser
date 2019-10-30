@@ -141,6 +141,11 @@ bool ConfigBackend::getInitialScaleEnable()
     return m_initialScaleEnable;
 }
 
+bool ConfigBackend::getMaxScaleEnable()
+{
+    return m_maxScaleEnable;
+}
+
 QString ConfigBackend::getLockImagePath()
 {
     return m_lockImagePath;
@@ -201,6 +206,9 @@ void ConfigBackend::readCESConfig()
 
     m_initialScaleEnable = getBoolFromSettings("initialScaleEnable", "Browser", false);
     emit initialScaleEnableChanged();
+
+    m_maxScaleEnable = getBoolFromSettings("maxScaleEnable", "Browser", false);
+    emit maxScaleEnableChanged();
 
     emit configChanged();
 

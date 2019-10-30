@@ -69,6 +69,8 @@ Window {
          */
         property bool initialScaleEnable: _configBackend.initialScaleEnable
 
+        property bool maxScaleEnable: _configBackend.maxScaleEnable
+
         onRotationChanged: {
             rotateView();
         }
@@ -116,7 +118,7 @@ Window {
                         /* console.log(webEngineView.url); */
                         disableTextSelection();
                         if(true === webEngineViewRect.initialScaleEnable){
-                            initialScaleHead();
+                            initialScaleHead(_configBackend.maxScaleEnable);
                         }
                         break;
                     }
@@ -283,18 +285,26 @@ Window {
     /* By default, this functions injects a smart piece of code to a html dom of a successful loaded html page,
      * and insert a tag <meta name="viewport" content="initial-scale=1"> to fix the browser resolution on startup
      * to the maximum display screen size on eglfs framebuffer
+     * To prevent pinch-to-zoom-function, maximum-scale=1 is set in viewport on demand
      * BUG: Codesys 3.5.14 --> wrong scaling on startup
      */
-    function initialScaleHead(){
+    function initialScaleHead(maxscale){
+
+        var scale;
+
+        if(true === maxscale){
+            scale = "node.setAttribute('content','initial-scale=1,maximum-scale=1');"
+        }else{
+            scale = "node.setAttribute('content','initial-scale=1');"
+        }
         webEngineView.runJavaScript(
             "setTimeout( () => { " +
             "var head = document.head;" +
             "var node = document.createElement('meta');" +
             "node.setAttribute('name','viewport');" +
-            "node.setAttribute('content','initial-scale=1,max-scale=1,user-scalable=no');" +
+            scale +
             "head.appendChild(node); },250);"
-            ,function(){}
-        )
+            ,function(){})
     }
 
     /* By default, this function injects a smart piece of code to a loaded html page (DOM tree),

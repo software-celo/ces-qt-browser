@@ -22,6 +22,7 @@ class ConfigBackend : public QObject
     Q_PROPERTY( bool keyboardEnable READ getKeyboardEnable NOTIFY keyboardEnableChanged FINAL )
     Q_PROPERTY( bool dialogsEnable READ getDialogsEnable NOTIFY dialogsEnableChanged FINAL)
     Q_PROPERTY( bool initialScaleEnable READ getInitialScaleEnable NOTIFY initialScaleEnableChanged FINAL)
+    Q_PROPERTY( bool maxScaleEnable	READ getMaxScaleEnable	NOTIFY maxScaleEnableChanged FINAL)
     Q_PROPERTY( QString lockImagePath READ getLockImagePath NOTIFY lockImagePathChanged)
 
 public:
@@ -58,6 +59,8 @@ public:
 
     bool getInitialScaleEnable();
 
+    bool getMaxScaleEnable();
+
 public slots:
     void rebootSystem();
     void readCESConfig();
@@ -69,6 +72,7 @@ signals:
     void dialogsEnableChanged();
     void lockImagePathChanged();
     void initialScaleEnableChanged();
+    void maxScaleEnableChanged();
 
 private:
     bool m_proximityEnable;
@@ -95,6 +99,7 @@ private:
     bool m_dialogsEnable;
     bool m_keyboardEnable;
     bool m_initialScaleEnable;
+    bool m_maxScaleEnable;
 
     QSettings* m_settings;
     QFileSystemWatcher m_configWatcher;
