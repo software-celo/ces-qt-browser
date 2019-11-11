@@ -105,17 +105,13 @@ Window {
                 webEngineView.LoadStartedStatus
                 switch(loadRequest.status){
                     case WebEngineView.LoadStartedStatus:  {
-                        /* console.log("Load started"); */
                         break;
                     }
                     case WebEngineView.LoadStoppedStatus: {
-                        /* console.log("Load stopped"); */
                         disableTextSelection();
                         break;
                     }
                     case WebEngineView.LoadSucceededStatus: {
-                        /* console.log("Load succeded"); */
-                        /* console.log(webEngineView.url); */
                         disableTextSelection();
                         if(true === webEngineViewRect.initialScaleEnable){
                             initialScaleHead(_configBackend.maxScaleEnable);
@@ -128,7 +124,6 @@ Window {
                         /* For more information about the error code refer to this page
                          *   https://cs.chromium.org/chromium/src/net/base/net_error_list.h
                          */
-                        /* console.log("Errormessage: " + loadRequest.errorString); */
                         webEngineView.url = webEngineView.erlPath + "?edomain=" + convertErrorDomainToString(loadRequest.errorDomain) + "&ecode=" + (-1)*loadRequest.errorCode ;
                         break;
                     }
