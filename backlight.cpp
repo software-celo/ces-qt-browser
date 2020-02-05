@@ -100,7 +100,7 @@ int Backlight::getMaxBrightness()
 
     if (!blFile.open(QIODevice::ReadOnly | QIODevice::Text))
             return 0;
-    char buffer[5];
+    char buffer[6];
     qint64 linelength = blFile.readLine(buffer, sizeof(buffer));
     if (linelength < 0)
         return 0;
@@ -127,7 +127,7 @@ int Backlight::getBrightness()
 
     if (!blFile.open(QIODevice::ReadOnly | QIODevice::Text))
             return 0;
-    char buffer[5];
+    char buffer[6];
     qint64 linelength = blFile.readLine(buffer, sizeof(buffer));
     if (linelength < 0)
         return 0;
