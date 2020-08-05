@@ -274,7 +274,7 @@ Window {
         WebEngine.defaultProfile.clearHttpCache();
         WebEngine.defaultProfile.httpCacheMaximumSize = 4000000;
         WebEngine.settings.errorPageEnabled = false;
-        WebEngine.settings.showScrollBars = false;
+        WebEngine.settings.showScrollBars = Qt.binding(function() { return _configBackend.scrollbarsEnable})
     }
 
     /* By default, this functions injects a smart piece of code to a html dom of a successful loaded html page,

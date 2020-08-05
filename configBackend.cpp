@@ -146,11 +146,15 @@ bool ConfigBackend::getMaxScaleEnable()
     return m_maxScaleEnable;
 }
 
+bool ConfigBackend::getScrollbarsEnable()
+{
+    return m_scrollbarsEnable;
+}
+
 QString ConfigBackend::getLockImagePath()
 {
     return m_lockImagePath;
 }
-
 
 void ConfigBackend::readCESConfig()
 {
@@ -209,6 +213,9 @@ void ConfigBackend::readCESConfig()
 
     m_maxScaleEnable = getBoolFromSettings("maxScaleEnable", "Browser", false);
     emit maxScaleEnableChanged();
+
+    m_scrollbarsEnable = getBoolFromSettings("scrollbarsEnable", "Browser", false);
+    emit scrollbarsEnableChanged();
 
     emit configChanged();
 
