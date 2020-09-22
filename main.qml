@@ -20,8 +20,8 @@ import QtQuick.VirtualKeyboard.Styles 2.2
 Window {
     id: window
     visible: true
-    height: 480
-    width: 800
+    height: Screen.height
+    width: Screen.width
     visibility: Window.FullScreen
 
     Connections {
