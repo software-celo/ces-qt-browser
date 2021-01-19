@@ -39,13 +39,23 @@ Window {
         }
     }
 
-	Action {
-		shortcut: "Ctrl+Esc"
-		onTriggered: {
-			if (webEngineView)
-				window.close()
-		}
-	}
+    Action {
+        shortcut: "Ctrl+Esc"
+            onTriggered: {
+                if (webEngineView)
+                    window.close()
+            }
+    }
+
+    Timer {
+        id: delayedReload
+        interval: 2000
+        running: false
+        repeat: false
+        onTriggered: {
+            webEngineView.reload()
+        }
+    }
 
     Rectangle{
         id: webEngineViewRect
@@ -93,9 +103,17 @@ Window {
                 request.accepted = true;
             }
 
+            /* RenderProcess Termination Handling
+             * Trigger reload after timer
+             */
+            onRenderProcessTerminated: {
+                if (terminationStatus != WebEngineView.NormalTerminationStatus)
+                    delayedReload.running = true
+            }
+
             /* Error Page Handling
              *
-             * In case of an load failure, the handler is called
+             * In case of a load failure, the handler is called
              * which changes the url of the current view to the path
              * of the standard error page path.
              *
