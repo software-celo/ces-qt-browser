@@ -16,6 +16,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
 import QtQuick.VirtualKeyboard 2.2
 import QtQuick.VirtualKeyboard.Styles 2.2
+import QtQuick.VirtualKeyboard.Settings 2.2
 
 Window {
     id: window
@@ -171,6 +172,18 @@ Window {
         initDialogs();
         rotateView();
 
+    }
+
+    Binding {
+        target: VirtualKeyboardSettings
+        property: "locale"
+        value: _configBackend.keyboardLocale
+    }
+
+    Binding {
+        target: VirtualKeyboardSettings
+        property: "activeLocales"
+        value: _configBackend.activeKeyboardLocales
     }
 
     /* Function converts the error domain code to an string representation

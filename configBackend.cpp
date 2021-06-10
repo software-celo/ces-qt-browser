@@ -156,6 +156,16 @@ QString ConfigBackend::getLockImagePath()
     return m_lockImagePath;
 }
 
+QString ConfigBackend::getKeyboardLocale()
+{
+    return m_keyboardLocale;
+}
+
+QString ConfigBackend::getActiveKeyboardLocales()
+{
+    return m_activeKeyboardLocales;
+}
+
 void ConfigBackend::readCESConfig()
 {
     m_settings->sync();
@@ -183,7 +193,6 @@ void ConfigBackend::readCESConfig()
     m_screensaverEnable = getBoolFromSettings("screensaverEnable", "Screensaver", true);
 
     m_lockImagePath = getStringFromSettings("lockImagePath", "Screensaver", "/usr/share/ces-qt-browser/lock.svg");
-
     emit lockImagePathChanged();
 
     m_proximityGPIO = getIntFromSettings("proximityGPIO", "Proximity", 89);
@@ -204,6 +213,12 @@ void ConfigBackend::readCESConfig()
 
     m_keyboardEnable = getBoolFromSettings("keyboardEnable", "Keyboard", false);
     emit keyboardEnableChanged();
+
+    m_keyboardLocale = getStringFromSettings("locale", "Keyboard", "de_DE");
+    emit keyboardLocaleChanged();
+
+    m_activeKeyboardLocales = getStringFromSettings("activeLocales", "Keyboard", "de_DE,en_GB,en_US");
+    emit activeKeyboardLocalesChanged();
 
     m_dialogsEnable = getBoolFromSettings("dialogsEnable", "Dialogs", false);
     emit dialogsEnableChanged();
