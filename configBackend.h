@@ -26,7 +26,6 @@ class ConfigBackend : public QObject
     Q_PROPERTY( bool scrollbarsEnable READ getScrollbarsEnable NOTIFY scrollbarsEnableChanged FINAL)
     Q_PROPERTY( QString lockImagePath READ getLockImagePath NOTIFY lockImagePathChanged FINAL)
     Q_PROPERTY( QString keyboardLocale READ getKeyboardLocale NOTIFY keyboardLocaleChanged FINAL)
-    Q_PROPERTY( QString activeKeyboardLocales READ getActiveKeyboardLocales NOTIFY activeKeyboardLocalesChanged FINAL)
 
 public:
     explicit ConfigBackend(QObject *parent = 0);
@@ -52,7 +51,6 @@ public:
     QString getLockImagePath();
 
     QString getKeyboardLocale();
-    QString getActiveKeyboardLocales();
 
     int getResetTime();
     bool getResetEnable();
@@ -83,7 +81,6 @@ signals:
     void maxScaleEnableChanged();
     void scrollbarsEnableChanged();
     void keyboardLocaleChanged();
-    void activeKeyboardLocalesChanged();
 
 private:
     bool m_proximityEnable;
@@ -106,7 +103,6 @@ private:
 
     QString m_lockImagePath;
     QString m_keyboardLocale;
-    QString m_activeKeyboardLocales;
 
     int m_rotationAngle;
     bool m_dialogsEnable;

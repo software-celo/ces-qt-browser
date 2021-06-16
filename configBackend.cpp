@@ -161,11 +161,6 @@ QString ConfigBackend::getKeyboardLocale()
     return m_keyboardLocale;
 }
 
-QString ConfigBackend::getActiveKeyboardLocales()
-{
-    return m_activeKeyboardLocales;
-}
-
 void ConfigBackend::readCESConfig()
 {
     m_settings->sync();
@@ -216,9 +211,6 @@ void ConfigBackend::readCESConfig()
 
     m_keyboardLocale = getStringFromSettings("locale", "Keyboard", "de_DE");
     emit keyboardLocaleChanged();
-
-    m_activeKeyboardLocales = getStringFromSettings("activeLocales", "Keyboard", "de_DE,en_GB,en_US");
-    emit activeKeyboardLocalesChanged();
 
     m_dialogsEnable = getBoolFromSettings("dialogsEnable", "Dialogs", false);
     emit dialogsEnableChanged();

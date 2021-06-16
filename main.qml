@@ -174,16 +174,16 @@ Window {
 
     }
 
-    Binding {
-        target: VirtualKeyboardSettings
-        property: "locale"
-        value: _configBackend.keyboardLocale
-    }
+    /* I still don't understand why setting VirtualKeyboardSettings.locale won't
+     * affect the current layout visible on screen.
+     * When setting activeLocales to a single locale it does exactly that.
+     * Use that way for now.
+     */
 
     Binding {
         target: VirtualKeyboardSettings
         property: "activeLocales"
-        value: _configBackend.activeKeyboardLocales
+        value: _configBackend.keyboardLocale
     }
 
     /* Function converts the error domain code to an string representation
