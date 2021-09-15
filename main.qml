@@ -27,7 +27,7 @@ Window {
 
     Connections {
         target: _idleHelper
-        onDailyReset: {
+        function onDailyReset() {
             webEngineView.reload()
         }
     }
