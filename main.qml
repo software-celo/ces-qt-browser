@@ -127,6 +127,7 @@ Window {
                         break;
                     }
                     case WebEngineView.LoadStoppedStatus: {
+                        load(loadRequest.url)
                         disableTextSelection();
                         break;
                     }
