@@ -1,6 +1,6 @@
 #include "proximity.h"
 
-Proximity::Proximity(QObject* parent = 0): QObject(parent)
+Proximity::Proximity(QObject* parent): QObject(parent)
 {
     m_gpioPath = "/sys/class/gpio/";
     m_pwmPath = "/sys/class/pwm/";

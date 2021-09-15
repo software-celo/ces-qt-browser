@@ -1,6 +1,6 @@
 #include "backlight.h"
 
-Backlight::Backlight(QObject* parent = 0): QObject(parent)
+Backlight::Backlight(QObject* parent): QObject(parent)
 {
     /* find valid backlight path; search here: */
     m_path = "/sys/class/backlight/";
