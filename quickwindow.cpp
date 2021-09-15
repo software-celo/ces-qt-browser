@@ -74,7 +74,7 @@ ApplicationEngine::ApplicationEngine()
     load(QUrl("qrc:/main.qml"));
 
     /*Calls a method, which loads a url to webengine*/
-    QMetaObject::invokeMethod(rootObjects().first(), "load", Q_ARG(QVariant, startupUrl()));
+    QMetaObject::invokeMethod(rootObjects().constFirst(), "load", Q_ARG(QVariant, startupUrl()));
 }
 
 
