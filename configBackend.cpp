@@ -4,6 +4,7 @@ ConfigBackend::ConfigBackend(QObject *parent) : QObject(parent)
 {
 
     /* early default init of browser custom properties to prevent property binding loop */
+    m_persistentCacheEnable = false;
     m_rotationAngle = 0;
     m_dialogsEnable = false;
     m_keyboardEnable = false;
@@ -12,8 +13,7 @@ ConfigBackend::ConfigBackend(QObject *parent) : QObject(parent)
 
     m_configWatcher.addPath(CESFILE);
     QObject::connect(&m_configWatcher, &QFileSystemWatcher::fileChanged, this, &ConfigBackend::readCESConfig);
-
-    QTimer::singleShot(0, this, SLOT(readCESConfig()));
+    readCESConfig();
 }
 
 
@@ -161,6 +161,11 @@ QString ConfigBackend::getKeyboardLocale()
     return m_keyboardLocale;
 }
 
+bool ConfigBackend::getPersistentCacheEnable()
+{
+    return m_persistentCacheEnable;
+}
+
 void ConfigBackend::readCESConfig()
 {
     m_settings->sync();
@@ -223,6 +228,9 @@ void ConfigBackend::readCESConfig()
 
     m_scrollbarsEnable = getBoolFromSettings("scrollbarsEnable", "Browser", false);
     emit scrollbarsEnableChanged();
+
+    m_persistentCacheEnable = getBoolFromSettings("persistentCacheEnable", "Browser", false);
+    emit persistentCacheEnableChanged();
 
     emit configChanged();
 

@@ -18,14 +18,15 @@
 class ConfigBackend : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY( int rotationAngle READ getRotationAngle NOTIFY rotationAngleChanged FINAL )
-    Q_PROPERTY( bool keyboardEnable READ getKeyboardEnable NOTIFY keyboardEnableChanged FINAL )
-    Q_PROPERTY( bool dialogsEnable READ getDialogsEnable NOTIFY dialogsEnableChanged FINAL)
-    Q_PROPERTY( bool initialScaleEnable READ getInitialScaleEnable NOTIFY initialScaleEnableChanged FINAL)
-    Q_PROPERTY( bool maxScaleEnable READ getMaxScaleEnable NOTIFY maxScaleEnableChanged FINAL)
-    Q_PROPERTY( bool scrollbarsEnable READ getScrollbarsEnable NOTIFY scrollbarsEnableChanged FINAL)
-    Q_PROPERTY( QString lockImagePath READ getLockImagePath NOTIFY lockImagePathChanged FINAL)
-    Q_PROPERTY( QString keyboardLocale READ getKeyboardLocale NOTIFY keyboardLocaleChanged FINAL)
+    Q_PROPERTY(int rotationAngle READ getRotationAngle NOTIFY rotationAngleChanged FINAL)
+    Q_PROPERTY(bool keyboardEnable READ getKeyboardEnable NOTIFY keyboardEnableChanged FINAL)
+    Q_PROPERTY(bool dialogsEnable READ getDialogsEnable NOTIFY dialogsEnableChanged FINAL)
+    Q_PROPERTY(bool initialScaleEnable READ getInitialScaleEnable NOTIFY initialScaleEnableChanged FINAL)
+    Q_PROPERTY(bool maxScaleEnable READ getMaxScaleEnable NOTIFY maxScaleEnableChanged FINAL)
+    Q_PROPERTY(bool scrollbarsEnable READ getScrollbarsEnable NOTIFY scrollbarsEnableChanged FINAL)
+    Q_PROPERTY(QString lockImagePath READ getLockImagePath NOTIFY lockImagePathChanged FINAL)
+    Q_PROPERTY(QString keyboardLocale READ getKeyboardLocale NOTIFY keyboardLocaleChanged FINAL)
+    Q_PROPERTY(bool persistentCacheEnable READ getPersistentCacheEnable NOTIFY persistentCacheEnableChanged FINAL)
 
 public:
     explicit ConfigBackend(QObject *parent = 0);
@@ -67,6 +68,8 @@ public:
 
     bool getScrollbarsEnable();
 
+    bool getPersistentCacheEnable();
+
 public slots:
     void rebootSystem();
     void readCESConfig();
@@ -81,6 +84,7 @@ signals:
     void maxScaleEnableChanged();
     void scrollbarsEnableChanged();
     void keyboardLocaleChanged();
+    void persistentCacheEnableChanged();
 
 private:
     bool m_proximityEnable;
@@ -110,6 +114,7 @@ private:
     bool m_initialScaleEnable;
     bool m_maxScaleEnable;
     bool m_scrollbarsEnable;
+    bool m_persistentCacheEnable;
 
     QSettings* m_settings;
     QFileSystemWatcher m_configWatcher;

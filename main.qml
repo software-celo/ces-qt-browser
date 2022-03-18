@@ -32,6 +32,15 @@ Window {
         }
     }
 
+    Connections {
+        target: _configBackend
+        onScrollbarsEnableChanged:
+        {
+            handleScrollbar(_configBackend.scrollbarsEnable);
+        }
+    }
+
+
     Action {
         shortcut: "Ctrl+R"
         onTriggered: {
@@ -138,9 +147,9 @@ Window {
                         }
                         break;
                     }
-                    default:{
-                    }
                     case WebEngineView.LoadFailedStatus: {
+                    }
+                    default:{
                         /* For more information about the error code refer to this page
                          *   https://cs.chromium.org/chromium/src/net/base/net_error_list.h
                          */
@@ -193,12 +202,6 @@ Window {
     function convertErrorDomainToString(edomaincode){
         var errordesc;
         switch(edomaincode){
-            default:{
-            }
-            case WebEngineView.NoErrorDomain:{
-                errordesc ="UNKNOWN ERROR";
-                break;
-            }
             case WebEngineView.InternalErrorDomain:{
                 errordesc ="QT INTERNAL ERROR";
                 break;
@@ -221,6 +224,12 @@ Window {
             }
             case WebEngineView.DnsErrorDomain:{
                 errordesc ="DNS CONNECTION ERROR";
+                break;
+            }
+            case WebEngineView.NoErrorDomain:{
+            }
+            default:{
+                errordesc ="UNKNOWN ERROR";
                 break;
             }
         }
@@ -284,29 +293,17 @@ Window {
     }
 
     /* Function for general settings of WebEngine
-     *
-     * - activates Cache in RAM
-     * - disable cookies
-     * - allows no persistent cache
-     * - maximum size of cache is restricted to  ~400MB
+     * - maximum size of cache is restricted to  ~40MB
      * - standard chromium error page is disabled
-     * - cache is cleared
      */
     function webBrowserConfig(){
-        WebEngine.defaultProfile.httpCacheType = 2;             /* No persistent cache */
-        WebEngine.defaultProfile.persistentCookiesPolicy = 0;	/* No Persistent cookies */
-        WebEngine.defaultProfile.offTheRecord = true;           /* Hold everything in RAM memory --> disable disk */
-
-        if( WebEngine.defaultProfile.offTheRecord){
-            /* console.log("Cache in RAM: Activated") */
-        }else{
-            /* console.log("Cache in RAM: Deactivated"); */
-        }
-
-        WebEngine.defaultProfile.clearHttpCache();
-        WebEngine.defaultProfile.httpCacheMaximumSize = 4000000;
+        handleCache(_configBackend.persistentCacheEnable);
+        handleScrollbar(_configBackend.scrollbarsEnable);
+        WebEngine.defaultProfile.httpCacheMaximumSize = 4000000; /* The maximum size of the HTTP cache. If 0,
+                                                                  * the size will be controlled automatically by QtWebEngine
+                                                                  * Set to ~4MB
+                                                                  */
         WebEngine.settings.errorPageEnabled = false;
-        WebEngine.settings.showScrollBars = Qt.binding(function() { return _configBackend.scrollbarsEnable})
     }
 
     /* By default, this functions injects a smart piece of code to a html dom of a successful loaded html page,
@@ -537,4 +534,39 @@ Window {
             webEngineView.height = webEngineView.height + Qt.inputMethod.keyboardRectangle.height
         }
     }
+
+    /* Handle Cache storage
+     *      Depending on the parameter persistent cache usage is activated
+     *      UsePersistentCache=false/true
+     */
+    function handleCache(UsePersistentCache) {
+        if(UsePersistentCache === false) {
+            /* persistenCache usage disabled --> DEFAULT */
+            console.log("Cache on Disk: Deactivated, Cache in RAM: Activated");
+            WebEngine.defaultProfile.offTheRecord = true;            /* Hold everything in RAM memory --> disable disk */
+            WebEngine.defaultProfile.httpCacheType = 2;              /* No persistent cache */
+            WebEngine.defaultProfile.persistentCookiesPolicy = 0;	 /* No Persistent cookies */
+            WebEngine.defaultProfile.clearHttpCache();               /* Removes the profile's cache entries */
+        } else {
+            /* persistenCache usage enabled */
+            console.log("Cache on Disk: Activated, Cache on RAM: Deactivated");
+            WebEngine.defaultProfile.offTheRecord = false;           /* Deactivate off the record functionality*/
+            WebEngine.defaultProfile.httpCacheType = 1;              /* Use a disk cache  */
+            WebEngine.defaultProfile.persistentCookiesPolicy = 1;	 /* Cookies marked persistent are saved to an restored from disk, whereas session cookies are only stored to disk for crash recovery */
+            WebEngine.defaultProfile.persistentStoragePath = "/overlay/browser/.store" /* Set path for persistent cookies storage */
+            WebEngine.defaultProfile.cachePath = "/overlay/browser/.cache"      /* Set path for cache storage */
+            console.log("Persistent Storage Path: " + WebEngine.defaultProfile.persistentStoragePath);
+            console.log("Cache Storage Path: " + WebEngine.defaultProfile.cachePath);
+        }
+    }
+
+    /* Handle Scrollbar
+     *      Depending on the parameter scrollbar is visible or not
+     *      ActivateScrollbar=false/true
+     */
+    function handleScrollbar(ActivateScrollbar) {
+        console.log("Scrollbar activation changed to " + ActivateScrollbar);
+        WebEngine.settings.showScrollBars = ActivateScrollbar;
+    }
 }
+
