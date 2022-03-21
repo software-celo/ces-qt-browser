@@ -168,6 +168,8 @@ bool ConfigBackend::getPersistentCacheEnable()
 
 void ConfigBackend::readCESConfig()
 {
+    bool tmp_val = false;
+
     m_settings->sync();
 
     m_lockTime = getIntFromSettings("lockTime", "Screensaver", 30);
@@ -226,11 +228,19 @@ void ConfigBackend::readCESConfig()
     m_maxScaleEnable = getBoolFromSettings("maxScaleEnable", "Browser", false);
     emit maxScaleEnableChanged();
 
-    m_scrollbarsEnable = getBoolFromSettings("scrollbarsEnable", "Browser", false);
-    emit scrollbarsEnableChanged();
+    tmp_val = getBoolFromSettings("scrollbarsEnable", "Browser", false);
+    if (tmp_val != m_scrollbarsEnable)
+    {
+        m_scrollbarsEnable = tmp_val;
+        emit scrollbarsEnableChanged();
+    }
 
-    m_persistentCacheEnable = getBoolFromSettings("persistentCacheEnable", "Browser", false);
-    emit persistentCacheEnableChanged();
+    tmp_val = getBoolFromSettings("persistentCacheEnable", "Browser", false);
+    if (tmp_val != m_persistentCacheEnable)
+    {
+        m_persistentCacheEnable = tmp_val;
+        emit persistentCacheEnableChanged();
+    }
 
     emit configChanged();
 
