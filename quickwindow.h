@@ -44,7 +44,7 @@
 ** Description: QtWebEngine based Browser with integration of QT Virtualkeyboard
 ** Company: Christ Electronic System GmbH
 ** Used License: LGPLv3
-** Copyright (C) 2017-2018 Christ Electronic Systems GmbH
+** Copyright (C) 2017-2022 Christ Electronic Systems GmbH
 **
 **
 **

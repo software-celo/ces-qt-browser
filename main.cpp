@@ -1,5 +1,5 @@
 /***************************************************************************************************************
-** Copyright (c) 2015-2018 Christ Electronic Systems GmbH
+** Copyright (c) 2015-2022 Christ Electronic Systems GmbH
 ** Copyright (c) 2015-2018 Peter Fink <pfink@christ-es.de>
 ** Copyright (c) 2017-2018 Steffen Kothe <skothe@christ-es.de>
 **

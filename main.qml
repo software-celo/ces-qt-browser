@@ -1,10 +1,11 @@
 /***************************************************************************************************************
 ** Author: Peter Fink
 ** Author: Steffen Kothe
+** Author: Florian Belser
 ** Description: QtWebEngine based Browser with integration of Qt Virtualkeyboard
 ** Company: Christ Electronic System GmbH
 ** Used License: LGPLv3
-** Copyright (C) 2017-2018 Christ Electronic Systems GmbH
+** Copyright (C) 2017-2022 Christ Electronic Systems GmbH
 **
 ***************************************************************************************************************/
 
