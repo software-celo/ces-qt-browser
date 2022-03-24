@@ -33,7 +33,7 @@ Rectangle {
 
     Connections {
         target: _idleHelper
-        function onLockTimeout() {
+        onLockTimeout: {
             if (_idleHelper.lockEnable){
                 page.width = windowWidth
                 page.height = windowHeight
@@ -49,7 +49,7 @@ Rectangle {
 //                console.debug("ignoring lockTimeout")
             }
         }
-        function onBlankTimeout() {
+        onBlankTimeout: {
             if (_idleHelper.blankEnable){
                 page.width = windowWidth
                 page.height = windowHeight
@@ -65,7 +65,7 @@ Rectangle {
 //                console.debug("ignoring blankTimeout")
             }
         }
-        function onUnblank() {
+        onUnblank: {
 //            console.debug("unblank")
             if (_idleHelper.lockEnable){
                 if(locked){
@@ -86,7 +86,7 @@ Rectangle {
 //                console.debug("unlock (unblank)")
             }
         }
-        function onInputEvent() {
+        onInputEvent: {
 //            console.debug("fast_unblank")
             if(_idleHelper.lockEnable && locked){
                     _backlight.unblank()
